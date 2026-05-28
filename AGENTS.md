@@ -24,3 +24,4 @@ Padrões:
 - Axios
 - Tailwind
 - componentes reutilizáveis
+- validar sempre páginas e fluxos alterados com Playwright antes de concluir
