@@ -1,62 +1,16 @@
-.app-page {
-  display: grid;
-  gap: 1.5rem;
+.dashboard-page__queue-card strong,
+.dashboard-page__guide strong,
+.placeholder-page strong {
+  color: var(--text-strong);
 }
 
-.app-page__hero,
-.app-card {
-  padding: 1.5rem;
-  border: 1px solid #dbe2ea;
-  border-radius: 1.25rem;
-  background: #ffffff;
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.06);
+.placeholder-page .summary-card strong {
+  font-size: 1.35rem;
 }
 
-.app-page__hero {
-  display: grid;
-  gap: 0.75rem;
-}
-
-.app-page__hero-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-}
-
-.app-page__eyebrow,
-.app-card span {
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #64748b;
-}
-
-.app-page__hero h1,
-.app-card strong {
-  color: #0f172a;
-}
-
-.app-page__hero h1 {
-  margin: 0;
-  font-size: clamp(2rem, 4vw, 3rem);
-  line-height: 1.05;
-}
-
-.app-page__hero p {
-  max-width: 56rem;
-  margin: 0;
-  color: #475569;
-  line-height: 1.7;
-}
-
-.app-page__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
-  gap: 1rem;
-}
-
-.app-card {
-  display: grid;
-  gap: 0.5rem;
+@media (max-width: 640px) {
+  .dashboard-page .rs-btn-group,
+  .dashboard-page .rs-stack {
+    width: 100%;
+  }
 }

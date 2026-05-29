@@ -1,175 +1,145 @@
 .boname-page {
   display: grid;
-  width: 100%;
-  max-width: 100%;
+  gap: 1.15rem;
+}
+
+.boname-page__inline-message {
+  border-radius: 1rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.boname-page__filters {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) repeat(2, minmax(13rem, 0.7fr));
+  gap: 1rem;
+}
+
+.boname-page__field {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.boname-page__field label,
+.boname-page__confirm-grid dt {
+  color: var(--text-strong);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.boname-page__field small,
+.boname-page__table-footer p,
+.boname-page__confirm-card p {
+  color: var(--text-muted);
+}
+
+.boname-page__field span {
+  color: #b91c1c;
+  font-size: 0.84rem;
+}
+
+.boname-page__field--search {
   min-width: 0;
-  justify-self: stretch;
-  gap: 1.5rem;
 }
 
-.boname-page__hero {
-  overflow: hidden;
-  border: 1px solid #d7e0ea;
-  border-radius: 1.5rem;
-  background:
-    radial-gradient(circle at top left, rgba(13, 148, 136, 0.16), transparent 28%),
-    linear-gradient(135deg, #ffffff 0%, #f4faf8 55%, #eef6ff 100%);
-  box-shadow: 0 24px 64px rgba(15, 23, 42, 0.08);
-}
-
-.boname-page__hero-grid {
-  display: grid;
-  gap: 1.5rem;
-}
-
-.boname-page__hero-copy h1 {
-  margin: 0;
-  font-size: clamp(2rem, 4vw, 3.25rem);
-  line-height: 1;
-  color: #0f172a;
-}
-
-.boname-page__hero-copy p {
-  margin: 0;
-  max-width: 48rem;
-  color: #475569;
-  line-height: 1.7;
-}
-
-.boname-page__eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.45rem 0.8rem;
-  border-radius: 999px;
-  background: rgba(15, 118, 110, 0.1);
-  color: #115e59;
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.boname-page__stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
-  gap: 1rem;
-}
-
-.boname-page__stat-card {
-  display: grid;
-  gap: 0.35rem;
-  padding: 1rem 1.1rem;
-  border: 1px solid rgba(148, 163, 184, 0.22);
-  border-radius: 1.2rem;
-  background: rgba(255, 255, 255, 0.86);
-  backdrop-filter: blur(12px);
-}
-
-.boname-page__stat-card span,
-.boname-page__section-heading p,
-.boname-page__form-field small {
-  color: #64748b;
-}
-
-.boname-page__stat-card span {
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.boname-page__stat-card strong {
-  font-size: 1.35rem;
-  color: #0f172a;
-}
-
-.boname-page__stat-card small {
-  line-height: 1.5;
-  word-break: break-word;
-}
-
-.boname-page__toolbar-panel,
-.boname-page__table-panel {
-  border: 1px solid #d7e0ea;
-  border-radius: 1.4rem;
-  background: #ffffff;
-  box-shadow: 0 16px 38px rgba(15, 23, 42, 0.06);
-}
-
-.boname-page__toolbar {
-  display: grid;
-  gap: 1rem;
-}
-
-.boname-page__search {
-  display: grid;
-  gap: 0.6rem;
-}
-
-.boname-page__field-label,
-.boname-page__section-heading h2,
-.boname-page__form-field label {
-  color: #0f172a;
-  font-weight: 700;
-}
-
-.boname-page__toolbar-actions {
-  justify-content: flex-start;
-}
-
-.boname-page__section-heading {
-  margin-bottom: 1rem;
-}
-
-.boname-page__section-heading h2 {
-  margin: 0 0 0.35rem;
-  font-size: 1.15rem;
-}
-
-.boname-page__section-heading p {
-  margin: 0;
-}
-
-.boname-page__loading-state,
-.boname-page__empty-state,
-.boname-page__modal-loading {
-  display: grid;
-  gap: 1rem;
-  justify-items: center;
-  padding: 1.5rem 0;
-  text-align: center;
-}
-
-.boname-page__empty-state {
-  padding: 2.4rem 1rem;
-  border: 1px dashed #cbd5e1;
-  border-radius: 1.25rem;
-  background: #f8fafc;
-}
-
-.boname-page__empty-state strong {
-  color: #0f172a;
-  font-size: 1.05rem;
-}
-
-.boname-page__empty-state p {
-  max-width: 30rem;
-  margin: 0;
-  color: #64748b;
+.boname-page__filter-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
 }
 
 .boname-page__table-wrap {
   overflow-x: auto;
+  border: 1px solid #e3ebf4;
+  border-radius: 1.15rem;
 }
 
 .boname-page__row-actions {
   height: 100%;
-  padding-inline: 0.5rem;
+  padding: 0.45rem;
 }
 
-.boname-page__message {
+.boname-page__row-actions--compact {
+  padding: 0;
+}
+
+.boname-page__card-list {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.boname-page__record-card {
+  border-radius: 1.2rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.boname-page__record-card .rs-panel-body {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.boname-page__record-card-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.85rem;
+  align-items: flex-start;
+}
+
+.boname-page__record-card-top strong {
+  display: block;
+  color: var(--text-strong);
+  font-size: 1rem;
+}
+
+.boname-page__record-card-top p {
+  margin: 0.3rem 0 0;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+
+.boname-page__record-meta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: 0;
+}
+
+.boname-page__record-meta div {
+  padding: 0.85rem 0.9rem;
+  border: 1px solid var(--border-soft);
   border-radius: 1rem;
+  background: rgba(248, 251, 255, 0.82);
+}
+
+.boname-page__record-meta dt,
+.boname-page__record-meta dd {
+  margin: 0;
+}
+
+.boname-page__record-meta dt {
+  color: var(--text-muted);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.boname-page__record-meta dd {
+  margin-top: 0.3rem;
+  color: var(--text-strong);
+  font-weight: 700;
+}
+
+.boname-page__table-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.boname-page__table-footer p {
+  margin: 0;
 }
 
 .boname-page__form-grid {
@@ -178,45 +148,111 @@
   gap: 1rem;
 }
 
-.boname-page__form-field {
-  display: grid;
-  gap: 0.45rem;
-}
-
-.boname-page__form-field--full {
+.boname-page__field--full {
   grid-column: 1 / -1;
 }
 
-.boname-page__form-field span {
-  color: #dc2626;
-  font-size: 0.85rem;
+.boname-page__control--error,
+.boname-page__control--error .rs-input,
+.boname-page__control--error.rs-input-number,
+.boname-page__control--error .rs-picker-toggle {
+  border-color: rgba(239, 68, 68, 0.72) !important;
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.12) !important;
 }
 
-.boname-page__toggle-row {
+.boname-page__status-panel {
   display: flex;
+  justify-content: space-between;
+  gap: 0.85rem;
   flex-wrap: wrap;
-  gap: 0.75rem;
   align-items: center;
+  padding: 1rem;
+  border: 1px solid var(--border-soft);
+  border-radius: 1rem;
+  background: rgba(248, 251, 255, 0.78);
 }
 
-@media (max-width: 920px) {
-  .boname-page__form-grid {
+.boname-page__status-actions {
+  display: flex;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.boname-page__confirm-card {
+  display: grid;
+  gap: 1rem;
+}
+
+.boname-page__confirm-card p {
+  margin: 0;
+  line-height: 1.7;
+}
+
+.boname-page__confirm-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: 0;
+}
+
+.boname-page__confirm-grid div {
+  padding: 0.9rem 0.95rem;
+  border: 1px solid var(--border-soft);
+  border-radius: 1rem;
+  background: rgba(248, 251, 255, 0.82);
+}
+
+.boname-page__confirm-grid dt,
+.boname-page__confirm-grid dd {
+  margin: 0;
+}
+
+.boname-page__confirm-grid dd {
+  margin-top: 0.25rem;
+  color: var(--text-strong);
+  font-weight: 700;
+}
+
+@media (max-width: 1100px) {
+  .boname-page__filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .boname-page__field--search {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 768px) {
+  .boname-page__filters,
+  .boname-page__form-grid,
+  .boname-page__confirm-grid,
+  .boname-page__record-meta {
     grid-template-columns: 1fr;
   }
-}
 
-@media (max-width: 640px) {
-  .boname-page__hero-copy h1 {
-    font-size: 2rem;
+  .boname-page__table-footer {
+    align-items: stretch;
   }
 
-  .boname-page__toolbar-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.75rem;
-  }
-
-  .boname-page__toolbar-actions .rs-btn {
+  .boname-page__table-footer .rs-pagination {
     width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .boname-page__record-card-top {
+    flex-direction: column;
+  }
+
+  .boname-page__row-actions--compact {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .boname-page__row-actions--compact .rs-btn {
+    width: 100%;
+    justify-content: center;
   }
 }

@@ -1,124 +1,136 @@
-import { useState, type ReactElement, type ReactNode } from 'react'
-import DashboardIcon from '@rsuite/icons/Dashboard'
-import DataAuthorizeIcon from '@rsuite/icons/DataAuthorize'
-import type { IconProps } from '@rsuite/icons/Icon'
-import PeoplesIcon from '@rsuite/icons/Peoples'
-import PieChartIcon from '@rsuite/icons/PieChart'
-import SearchIcon from '@rsuite/icons/Search'
-import SettingIcon from '@rsuite/icons/Setting'
-import { SiProtondb } from 'react-icons/si'
+import { useState, type ReactNode } from 'react'
 import {
+  Avatar,
+  Badge,
   Breadcrumb,
   Button,
   Container,
   Content,
   Header,
   HStack,
+  IconButton,
   Input,
   InputGroup,
   Nav,
-  Placeholder,
+  Panel,
+  Popover,
   Sidebar,
   Sidenav,
   VStack,
+  Whisper,
   useMediaQuery,
 } from 'rsuite'
+import SearchIcon from '@rsuite/icons/Search'
+import {
+  RiAddLine,
+  RiCloseLine,
+  RiMenuLine,
+  RiNotification3Line,
+  RiShieldCrossLine,
+} from 'react-icons/ri'
+import { NAVIGATION_GROUPS, type SectionKey } from '../config/navigation'
 import './MainLayout.css'
 
-type NavigationItem = {
-  eventKey: string
-  icon: ReactElement<IconProps>
-  label: string
-}
+const HEADER_HEIGHT = 80
+const SIDEBAR_EXPANDED = 280
+const SIDEBAR_COLLAPSED = 88
+const OVERVIEW_GROUP = 'Visao geral'
 
-export interface MainLayoutProps {
-  children: ReactNode
-  activeSidebarKey?: string
-  breadcrumbItems?: string[]
-  onSidebarSelect?: (eventKey: string) => void
-  hidePageChrome?: boolean
-  pageDescription?: string
-  pageTitle?: string
-}
-
-const HEADER_HEIGHT = 64
-const EXPANDED_SIDEBAR_WIDTH = 260
-const COLLAPSED_SIDEBAR_WIDTH = 72
-
-const SIDEBAR_ITEMS: NavigationItem[] = [
-  { eventKey: 'inicio', icon: <DashboardIcon /> as ReactElement<IconProps>, label: 'Inicio' },
-  { eventKey: 'pacientes', icon: <PeoplesIcon /> as ReactElement<IconProps>, label: 'Pacientes' },
-  { eventKey: 'estoque', icon: <PieChartIcon /> as ReactElement<IconProps>, label: 'Estoque' },
-  { eventKey: 'requisicoes', icon: <DataAuthorizeIcon /> as ReactElement<IconProps>, label: 'Requisicoes' },
-]
-
-const HEADER_ITEMS: Array<{ eventKey: string; label: string }> = [
-  { eventKey: 'visao-geral', label: 'Visao geral' },
-  { eventKey: 'operacao', label: 'Operacao' },
-  { eventKey: 'suporte', label: 'Suporte' },
-]
-
-const SIDEBAR_BRAND = (
-  <>
-    <SiProtondb size={28} />
-    <VStack spacing={2} alignItems="flex-start">
-      <strong>Farmacia</strong>
-      <span>Ambulatorial</span>
-    </VStack>
-  </>
+const SIDEBAR_SECTION_KEYS = new Set<SectionKey>(
+  NAVIGATION_GROUPS.flatMap((group) => group.items.map((item) => item.eventKey))
 )
 
+const getMenuEventKey = (groupTitle: string) => `menu-${groupTitle.toLowerCase().replace(/\s+/g, '-')}`
+
+const SECTION_MENU_MAP: Partial<Record<SectionKey, string>> = NAVIGATION_GROUPS.reduce((map, group) => {
+  if (group.title === OVERVIEW_GROUP) {
+    return map
+  }
+
+  const menuEventKey = getMenuEventKey(group.title)
+
+  group.items.forEach((item) => {
+    map[item.eventKey] = menuEventKey
+  })
+
+  return map
+}, {} as Partial<Record<SectionKey, string>>)
+
+export interface MainLayoutProps {
+  activeSidebarKey: SectionKey
+  breadcrumbItems?: string[]
+  children: ReactNode
+  onQuickActionSelect?: (eventKey: SectionKey) => void
+  onSidebarSelect?: (eventKey: SectionKey) => void
+  pageBannerCompact?: boolean
+  pageDescription?: string
+  pageMetaVisible?: boolean
+  pageStatus?: string
+  pageTitle?: string
+  quickActions?: Array<{ eventKey: SectionKey; label: string }>
+}
+
+const NOTIFICATIONS = [
+  {
+    title: 'Aprovacoes pendentes',
+    description: 'Existem requisicoes aguardando priorizacao no modulo operacional.',
+  },
+  {
+    title: 'Padrao visual atualizado',
+    description: 'Shell corporativo aplicado e pronto para os proximos modulos.',
+  },
+  {
+    title: 'Integracao de Boname',
+    description: 'CRUD principal preparado com estados de carregamento, vazio e erro.',
+  },
+]
+
+const SIDEBAR_NOTES = [
+  'Fluxos separados por operacao e cadastros.',
+  'Indicadores visuais destacam o modulo ativo.',
+]
+
 export function MainLayout({
+  activeSidebarKey,
+  breadcrumbItems = ['Inicio', 'Workspace', 'Dashboard'],
   children,
-  activeSidebarKey: controlledSidebarKey,
-  breadcrumbItems = ['Inicio', 'Farmacia', 'Dashboard'],
-  hidePageChrome = false,
+  onQuickActionSelect,
   onSidebarSelect,
-  pageDescription = 'Estrutura pronta para receber rotas, modulos e dados do sistema.',
-  pageTitle = 'Workspace principal',
+  pageBannerCompact = false,
+  pageDescription = 'Workspace corporativo preparado para os modulos da farmacia ambulatorial.',
+  pageMetaVisible = true,
+  pageStatus = 'Operacao ativa',
+  pageTitle = 'Dashboard corporativo',
+  quickActions = [],
 }: MainLayoutProps) {
   const [isMobile] = useMediaQuery('(max-width: 991px)')
+  const [isCompactMobile] = useMediaQuery('(max-width: 480px)')
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true)
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
-  const [internalActiveSidebarKey, setInternalActiveSidebarKey] = useState(
-    controlledSidebarKey ?? SIDEBAR_ITEMS[0]?.eventKey ?? 'inicio',
-  )
-  const [activeHeaderKey, setActiveHeaderKey] = useState(HEADER_ITEMS[0]?.eventKey ?? 'visao-geral')
-  const activeSidebarKey = controlledSidebarKey ?? internalActiveSidebarKey
 
   const sidebarWidth = isMobile
-    ? EXPANDED_SIDEBAR_WIDTH
+    ? SIDEBAR_EXPANDED
     : isSidebarExpanded
-      ? EXPANDED_SIDEBAR_WIDTH
-      : COLLAPSED_SIDEBAR_WIDTH
+      ? SIDEBAR_EXPANDED
+      : SIDEBAR_COLLAPSED
 
   const isSidebarVisible = !isMobile || isMobileSidebarOpen
+  const showSidebarLabels = isSidebarExpanded || isMobile
+  const activeMenuKey = SECTION_MENU_MAP[activeSidebarKey]
 
   const handleSidebarSelect = (eventKey: string | number | undefined) => {
-    if (typeof eventKey !== 'string') {
+    if (typeof eventKey !== 'string' || !SIDEBAR_SECTION_KEYS.has(eventKey as SectionKey) || !onSidebarSelect) {
       return
     }
 
-    if (onSidebarSelect) {
-      onSidebarSelect(eventKey)
-    } else {
-      setInternalActiveSidebarKey(eventKey)
-    }
+    onSidebarSelect(eventKey as SectionKey)
 
     if (isMobile) {
       setIsMobileSidebarOpen(false)
     }
   }
 
-  const handleHeaderSelect = (eventKey: string | number | undefined) => {
-    if (typeof eventKey !== 'string') {
-      return
-    }
-
-    setActiveHeaderKey(eventKey)
-  }
-
-  const handleSidebarToggle = () => {
+  const toggleSidebar = () => {
     if (isMobile) {
       setIsMobileSidebarOpen((currentValue) => !currentValue)
       return
@@ -127,42 +139,96 @@ export function MainLayout({
     setIsSidebarExpanded((currentValue) => !currentValue)
   }
 
+  const quickActionsSpeaker = (
+    <Popover className="main-layout__notifications-popover">
+      <VStack spacing={10} alignItems="stretch">
+        {quickActions.map((action) => (
+          <Button
+            appearance="subtle"
+            className="main-layout__quick-action"
+            key={action.eventKey}
+            onClick={() => onQuickActionSelect?.(action.eventKey)}
+          >
+            {action.label}
+          </Button>
+        ))}
+      </VStack>
+    </Popover>
+  )
+
   return (
     <Container className="main-layout">
       <Header className="main-layout__header">
         <HStack justifyContent="space-between" alignItems="center" className="main-layout__header-row">
-          <HStack spacing={12} className="main-layout__header-brand">
-            <Button appearance="subtle" className="main-layout__menu-button" onClick={handleSidebarToggle}>
-              {isMobile ? 'Menu' : isSidebarExpanded ? 'Recolher' : 'Expandir'}
-            </Button>
-            <VStack spacing={2} alignItems="flex-start">
-              <strong>Farmacia Ambulatorial</strong>
-              <span>Painel operacional base</span>
-            </VStack>
+          <HStack spacing={14} alignItems="center" className="main-layout__header-brand">
+            <IconButton
+              appearance="subtle"
+              circle
+              aria-label={isSidebarVisible ? 'Alternar menu lateral' : 'Abrir menu lateral'}
+              icon={isSidebarVisible ? <RiCloseLine size={18} /> : <RiMenuLine size={18} />}
+              onClick={toggleSidebar}
+            />
+
+            <div className="main-layout__brand-lockup">
+              <div className="main-layout__brand-mark">
+                <RiShieldCrossLine size={18} />
+              </div>
+              <VStack spacing={2} alignItems="flex-start">
+                <strong>Farmacia Ambulatorial</strong>
+                <span>Workspace web corporativo</span>
+              </VStack>
+            </div>
           </HStack>
 
-          <HStack spacing={16} className="main-layout__header-actions">
-            {!isMobile ? (
-              <InputGroup inside className="main-layout__search" size="sm">
-                <InputGroup.Addon>
-                  <SearchIcon />
-                </InputGroup.Addon>
-                <Input placeholder="Buscar modulo, paciente ou lote" />
-              </InputGroup>
-            ) : null}
+          <InputGroup inside className="main-layout__global-search">
+            <InputGroup.Addon>
+              <SearchIcon />
+            </InputGroup.Addon>
+            <Input placeholder="Buscar modulo, tela ou acao" />
+          </InputGroup>
 
-            <Nav
-              appearance="subtle"
-              activeKey={activeHeaderKey}
-              className="main-layout__top-nav"
-              onSelect={handleHeaderSelect}
+          <HStack spacing={12} alignItems="center" className="main-layout__header-actions">
+            <Whisper
+              placement="bottomEnd"
+              trigger="click"
+              speaker={
+                <Popover className="main-layout__notifications-popover">
+                  <VStack spacing={14} alignItems="stretch">
+                    {NOTIFICATIONS.map((notification) => (
+                      <div className="main-layout__notification" key={notification.title}>
+                        <strong>{notification.title}</strong>
+                        <p>{notification.description}</p>
+                      </div>
+                    ))}
+                  </VStack>
+                </Popover>
+              }
             >
-              {HEADER_ITEMS.map((item) => (
-                <Nav.Item eventKey={item.eventKey} key={item.eventKey}>
-                  {item.label}
-                </Nav.Item>
-              ))}
-            </Nav>
+              <Badge content={NOTIFICATIONS.length}>
+                <IconButton
+                  appearance="subtle"
+                  circle
+                  aria-label="Notificacoes"
+                  icon={<RiNotification3Line size={18} />}
+                />
+              </Badge>
+            </Whisper>
+
+            <Whisper placement="bottomEnd" trigger="click" speaker={quickActionsSpeaker}>
+              <Button appearance="primary" startIcon={<RiAddLine size={16} />}>
+                {isCompactMobile ? 'Acoes' : 'Acoes rapidas'}
+              </Button>
+            </Whisper>
+
+            <div className="main-layout__user-chip">
+              <Avatar circle size="sm" style={{ background: '#1d4ed8' }}>
+                GO
+              </Avatar>
+              <VStack spacing={2} alignItems="flex-start">
+                <strong>Gustavo Oliveira</strong>
+                <span>Frontend senior</span>
+              </VStack>
+            </div>
           </HStack>
         </HStack>
       </Header>
@@ -170,62 +236,115 @@ export function MainLayout({
       <Container className="main-layout__frame">
         {isSidebarVisible ? (
           <Sidebar
-            collapsible
             width={sidebarWidth}
-            className={`main-layout__sidebar ${isMobile ? 'main-layout__sidebar--mobile' : ''}`}
+            className={`main-layout__sidebar ${isMobile ? 'main-layout__sidebar--mobile' : ''} ${
+              showSidebarLabels ? 'main-layout__sidebar--expanded' : 'main-layout__sidebar--collapsed'
+            }`.trim()}
             style={{ top: HEADER_HEIGHT }}
           >
-            <Sidenav expanded={isMobile ? true : isSidebarExpanded} appearance="subtle">
-              <Sidenav.Header>
-                <VStack spacing={12} className="main-layout__sidenav-header">
-                  <HStack spacing={12} justifyContent={isSidebarExpanded || isMobile ? 'flex-start' : 'center'}>
-                    {isSidebarExpanded || isMobile ? SIDEBAR_BRAND : <SiProtondb size={28} />}
-                  </HStack>
+            <div className="main-layout__sidebar-inner">
+              <div className="main-layout__sidebar-top">
+                <div className="main-layout__sidebar-intro">
+                  <span className="main-layout__sidebar-spotlight">
+                    <RiShieldCrossLine size={18} />
+                  </span>
 
-                  {isSidebarExpanded || isMobile ? (
-                    <InputGroup inside size="sm">
-                      <InputGroup.Addon>
-                        <SearchIcon />
-                      </InputGroup.Addon>
-                      <Input placeholder="Filtrar menu" />
-                    </InputGroup>
+                  {showSidebarLabels ? (
+                    <div>
+                      <strong>Navegacao operacional</strong>
+                      <p>Menus pensados para acesso rapido, leitura clara e priorizacao do fluxo diario.</p>
+                    </div>
                   ) : null}
-                </VStack>
-              </Sidenav.Header>
+                </div>
+              </div>
 
-              <Sidenav.Body>
-                <Nav activeKey={activeSidebarKey} onSelect={handleSidebarSelect}>
-                  {SIDEBAR_ITEMS.map((item) => (
-                    <Nav.Item eventKey={item.eventKey} icon={item.icon} key={item.eventKey}>
-                      {item.label}
-                    </Nav.Item>
-                  ))}
+              <div className="main-layout__sidebar-groups">
+                <Sidenav
+                  key={activeMenuKey ?? 'overview'}
+                  appearance="subtle"
+                  expanded={showSidebarLabels}
+                  className="main-layout__sidenav"
+                  defaultOpenKeys={activeMenuKey ? [activeMenuKey] : []}
+                >
+                  <Sidenav.Body>
+                    <Nav
+                      appearance="subtle"
+                      className="main-layout__nav"
+                      activeKey={activeSidebarKey}
+                      onSelect={handleSidebarSelect}
+                    >
+                      {NAVIGATION_GROUPS.map((group) => {
+                        if (group.title === OVERVIEW_GROUP) {
+                          return group.items.map((item) => (
+                            <Nav.Item eventKey={item.eventKey} key={item.eventKey}>
+                              <div className="main-layout__nav-item-shell">
+                                <span className="main-layout__nav-item-icon">{item.icon}</span>
+                                {showSidebarLabels ? (
+                                  <div className="main-layout__nav-item-label">
+                                    <span>{item.label}</span>
+                                    {item.badge ? (
+                                      <small className="main-layout__nav-item-badge">{item.badge}</small>
+                                    ) : null}
+                                  </div>
+                                ) : null}
+                              </div>
+                            </Nav.Item>
+                          ))
+                        }
 
-                  <Nav.Menu eventKey="parametros" icon={<SettingIcon />} title="Parametros">
-                    <Nav.Item eventKey="parametros/boname">Boname</Nav.Item>
-                  </Nav.Menu>
-                </Nav>
-              </Sidenav.Body>
+                        return (
+                          <Nav.Menu
+                            eventKey={getMenuEventKey(group.title)}
+                            key={group.title}
+                            title={
+                              <div className="main-layout__nav-menu-title">
+                                <span className="main-layout__nav-item-icon">{group.items[0]?.icon}</span>
+                                {showSidebarLabels ? <span>{group.title}</span> : null}
+                              </div>
+                            }
+                          >
+                            {group.items.map((item) => (
+                              <Nav.Item eventKey={item.eventKey} key={item.eventKey}>
+                                <div className="main-layout__nav-item-shell">
+                                  <span className="main-layout__nav-item-icon">{item.icon}</span>
+                                  {showSidebarLabels ? (
+                                    <div className="main-layout__nav-item-label">
+                                      <span>{item.label}</span>
+                                      {item.badge ? (
+                                        <small className="main-layout__nav-item-badge">{item.badge}</small>
+                                      ) : null}
+                                    </div>
+                                  ) : null}
+                                </div>
+                              </Nav.Item>
+                            ))}
+                          </Nav.Menu>
+                        )
+                      })}
+                    </Nav>
+                  </Sidenav.Body>
+                </Sidenav>
+              </div>
 
-              <Sidenav.Footer>
-                {isMobile ? (
-                  <div className="main-layout__sidebar-footer">
-                    <Button appearance="subtle" block onClick={handleSidebarToggle}>
-                      Fechar menu
-                    </Button>
-                  </div>
-                ) : (
-                  <Sidenav.Toggle onToggle={setIsSidebarExpanded} />
-                )}
-              </Sidenav.Footer>
-            </Sidenav>
+              {showSidebarLabels ? (
+                <Panel bordered className="main-layout__sidebar-card">
+                  <strong>Leitura mais objetiva</strong>
+                  <p>O submenu abre com foco no grupo atual e mantem os atalhos mais usados em evidencia.</p>
+                  <ul className="main-layout__sidebar-notes">
+                    {SIDEBAR_NOTES.map((note) => (
+                      <li key={note}>{note}</li>
+                    ))}
+                  </ul>
+                </Panel>
+              ) : null}
+            </div>
           </Sidebar>
         ) : null}
 
         {isMobile && isMobileSidebarOpen ? (
           <button
             type="button"
-            aria-label="Fechar menu lateral"
+            aria-label="Fechar navegacao lateral"
             className="main-layout__backdrop"
             onClick={() => setIsMobileSidebarOpen(false)}
           />
@@ -233,36 +352,42 @@ export function MainLayout({
 
         <Container className="main-layout__content-shell">
           <Content className="main-layout__content">
-            <VStack spacing={20} className="main-layout__content-stack">
-              {!hidePageChrome ? (
-                <HStack
-                  justifyContent="space-between"
-                  alignItems="flex-start"
-                  className="main-layout__content-topbar"
-                >
-                  <VStack spacing={6} alignItems="flex-start">
+            <div className="main-layout__content-stack">
+              <Panel
+                bordered
+                className={`main-layout__page-banner ${pageBannerCompact ? 'main-layout__page-banner--compact' : ''}`.trim()}
+              >
+                <div className="main-layout__page-banner-grid">
+                  <VStack spacing={8} alignItems="flex-start" className="main-layout__page-copy">
                     <Breadcrumb>
                       {breadcrumbItems.slice(0, -1).map((item) => (
                         <Breadcrumb.Item key={item}>{item}</Breadcrumb.Item>
                       ))}
                       <Breadcrumb.Item active>{breadcrumbItems[breadcrumbItems.length - 1] ?? pageTitle}</Breadcrumb.Item>
                     </Breadcrumb>
-                    <div className="main-layout__content-copy">
-                      <h2>{pageTitle}</h2>
-                      {pageDescription ? <p>{pageDescription}</p> : null}
+                    <div>
+                      <h1>{pageTitle}</h1>
+                      <p>{pageDescription}</p>
                     </div>
                   </VStack>
 
-                  {!isMobile ? (
-                    <div className="main-layout__overview-card">
-                      <Placeholder.Paragraph rows={2} active />
+                  {pageMetaVisible ? (
+                    <div className="main-layout__page-meta">
+                      <div>
+                        <span>Status</span>
+                        <strong>{pageStatus}</strong>
+                      </div>
+                      <div>
+                        <span>Padrao</span>
+                        <strong>RSuite + componentes reutilizaveis</strong>
+                      </div>
                     </div>
                   ) : null}
-                </HStack>
-              ) : null}
+                </div>
+              </Panel>
 
-              {children}
-            </VStack>
+              <div className="main-layout__page-body">{children}</div>
+            </div>
           </Content>
         </Container>
       </Container>

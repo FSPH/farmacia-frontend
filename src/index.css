@@ -1,9 +1,12 @@
 :root {
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  color: #1f2937;
-  background: #f6f8fb;
+  color: var(--text-strong);
+  background:
+    radial-gradient(circle at top left, var(--app-bg-accent), transparent 24%),
+    radial-gradient(circle at top right, rgba(37, 99, 235, 0.08), transparent 18%),
+    var(--app-bg);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -14,13 +17,16 @@ html,
 body,
 #root {
   height: 100%;
+  overflow: hidden;
 }
 
 body {
   margin: 0;
   min-width: 320px;
-  min-height: 100vh;
-  background: #f6f8fb;
+  background:
+    radial-gradient(circle at top left, var(--app-bg-accent), transparent 24%),
+    radial-gradient(circle at top right, rgba(37, 99, 235, 0.08), transparent 18%),
+    var(--app-bg);
 }
 
 a {
@@ -32,41 +38,18 @@ button {
   font: inherit;
 }
 
-.app-alert__popup {
-  width: min(32rem, calc(100vw - 2rem));
-  border-radius: 1.25rem;
-  padding: 1.4rem;
-  box-shadow: 0 24px 64px rgba(15, 23, 42, 0.18);
+#root {
+  isolation: isolate;
 }
 
-.app-alert__title {
-  color: #0f172a;
-  font-size: 1.15rem;
-}
-
-.app-alert__content,
-.app-alert__toast-content {
-  color: #475569;
-  line-height: 1.55;
-}
-
-.app-alert__actions {
-  gap: 0.75rem;
-  margin-top: 1.2rem;
-}
-
-.app-alert__button {
-  min-width: 8rem;
-}
-
-.app-alert__toast {
+.app-notification {
   border-radius: 1rem;
-  padding: 0.85rem 1rem;
-  box-shadow: 0 18px 42px rgba(15, 23, 42, 0.14);
+  border: 1px solid var(--border-soft);
+  box-shadow: var(--shadow-strong);
 }
 
-.app-alert__toast-title {
-  color: #0f172a;
-  font-size: 0.95rem;
-  font-weight: 700;
+.app-notification__content {
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.6;
 }
