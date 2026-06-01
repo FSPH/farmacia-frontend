@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import {
   Avatar,
   Badge,
@@ -9,8 +9,6 @@ import {
   Header,
   HStack,
   IconButton,
-  Input,
-  InputGroup,
   Nav,
   Panel,
   Popover,
@@ -20,7 +18,6 @@ import {
   Whisper,
   useMediaQuery,
 } from 'rsuite'
-import SearchIcon from '@rsuite/icons/Search'
 import {
   RiAddLine,
   RiCloseLine,
@@ -28,10 +25,12 @@ import {
   RiNotification3Line,
   RiShieldCrossLine,
 } from 'react-icons/ri'
+import logoFull from '../assets/img/logo_full.jpeg'
+import logoSimple from '../assets/img/logo_simple.jpeg'
+import menuIcon from '../assets/img/menu.svg'
 import { NAVIGATION_GROUPS, type SectionKey } from '../config/navigation'
 import './MainLayout.css'
 
-const HEADER_HEIGHT = 80
 const SIDEBAR_EXPANDED = 280
 const SIDEBAR_COLLAPSED = 88
 const OVERVIEW_GROUP = 'Visao geral'
@@ -85,11 +84,6 @@ const NOTIFICATIONS = [
   },
 ]
 
-const SIDEBAR_NOTES = [
-  'Fluxos separados por operacao e cadastros.',
-  'Indicadores visuais destacam o modulo ativo.',
-]
-
 export function MainLayout({
   activeSidebarKey,
   breadcrumbItems = ['Inicio', 'Workspace', 'Dashboard'],
@@ -117,6 +111,13 @@ export function MainLayout({
   const isSidebarVisible = !isMobile || isMobileSidebarOpen
   const showSidebarLabels = isSidebarExpanded || isMobile
   const activeMenuKey = SECTION_MENU_MAP[activeSidebarKey]
+  const [openMenuKeys, setOpenMenuKeys] = useState<string[]>(activeMenuKey ? [activeMenuKey] : [])
+  const headerStyle = isMobile ? undefined : { left: sidebarWidth }
+
+  useEffect(() => {
+    if (!activeMenuKey) return
+    setOpenMenuKeys((currentKeys) => (currentKeys.includes(activeMenuKey) ? currentKeys : [activeMenuKey]))
+  }, [activeMenuKey])
 
   const handleSidebarSelect = (eventKey: string | number | undefined) => {
     if (typeof eventKey !== 'string' || !SIDEBAR_SECTION_KEYS.has(eventKey as SectionKey) || !onSidebarSelect) {
@@ -158,16 +159,18 @@ export function MainLayout({
 
   return (
     <Container className="main-layout">
-      <Header className="main-layout__header">
+      <Header className="main-layout__header" style={headerStyle}>
         <HStack justifyContent="space-between" alignItems="center" className="main-layout__header-row">
           <HStack spacing={14} alignItems="center" className="main-layout__header-brand">
-            <IconButton
-              appearance="subtle"
-              circle
-              aria-label={isSidebarVisible ? 'Alternar menu lateral' : 'Abrir menu lateral'}
-              icon={isSidebarVisible ? <RiCloseLine size={18} /> : <RiMenuLine size={18} />}
-              onClick={toggleSidebar}
-            />
+            {isMobile ? (
+              <IconButton
+                appearance="subtle"
+                circle
+                aria-label={isSidebarVisible ? 'Alternar menu lateral' : 'Abrir menu lateral'}
+                icon={isSidebarVisible ? <RiCloseLine size={18} /> : <RiMenuLine size={18} />}
+                onClick={toggleSidebar}
+              />
+            ) : null}
 
             <div className="main-layout__brand-lockup">
               <div className="main-layout__brand-mark">
@@ -179,13 +182,6 @@ export function MainLayout({
               </VStack>
             </div>
           </HStack>
-
-          <InputGroup inside className="main-layout__global-search">
-            <InputGroup.Addon>
-              <SearchIcon />
-            </InputGroup.Addon>
-            <Input placeholder="Buscar modulo, tela ou acao" />
-          </InputGroup>
 
           <HStack spacing={12} alignItems="center" className="main-layout__header-actions">
             <Whisper
@@ -240,31 +236,41 @@ export function MainLayout({
             className={`main-layout__sidebar ${isMobile ? 'main-layout__sidebar--mobile' : ''} ${
               showSidebarLabels ? 'main-layout__sidebar--expanded' : 'main-layout__sidebar--collapsed'
             }`.trim()}
-            style={{ top: HEADER_HEIGHT }}
+            style={{ top: 0 }}
           >
             <div className="main-layout__sidebar-inner">
               <div className="main-layout__sidebar-top">
-                <div className="main-layout__sidebar-intro">
-                  <span className="main-layout__sidebar-spotlight">
-                    <RiShieldCrossLine size={18} />
-                  </span>
-
-                  {showSidebarLabels ? (
-                    <div>
-                      <strong>Navegacao operacional</strong>
-                      <p>Menus pensados para acesso rapido, leitura clara e priorizacao do fluxo diario.</p>
-                    </div>
-                  ) : null}
-                </div>
+                <img
+                  src={showSidebarLabels ? logoFull : logoSimple}
+                  alt="Farmacia Ambulatorial"
+                  className="main-layout__sidebar-logo"
+                />
+                <IconButton
+                  appearance="subtle"
+                  circle
+                  aria-label="Alternar menu lateral"
+                  className="main-layout__sidebar-toggle"
+                  icon={
+                    <img
+                      src={menuIcon}
+                      alt=""
+                      aria-hidden
+                      className={`main-layout__sidebar-toggle-icon ${
+                        showSidebarLabels ? '' : 'main-layout__sidebar-toggle-icon--collapsed'
+                      }`.trim()}
+                    />
+                  }
+                  onClick={toggleSidebar}
+                />
               </div>
-
               <div className="main-layout__sidebar-groups">
                 <Sidenav
                   key={activeMenuKey ?? 'overview'}
                   appearance="subtle"
                   expanded={showSidebarLabels}
                   className="main-layout__sidenav"
-                  defaultOpenKeys={activeMenuKey ? [activeMenuKey] : []}
+                  openKeys={openMenuKeys}
+                  onOpenChange={(nextOpenKeys) => setOpenMenuKeys(nextOpenKeys as string[])}
                 >
                   <Sidenav.Body>
                     <Nav
@@ -296,8 +302,17 @@ export function MainLayout({
                           <Nav.Menu
                             eventKey={getMenuEventKey(group.title)}
                             key={group.title}
+                            trigger={showSidebarLabels ? 'hover' : 'click'}
+                            placement={showSidebarLabels ? undefined : 'rightStart'}
                             title={
-                              <div className="main-layout__nav-menu-title">
+                              <div
+                                className="main-layout__nav-menu-title"
+                                onClick={() => {
+                                  if (showSidebarLabels) return
+                                  setIsSidebarExpanded(true)
+                                  setOpenMenuKeys([getMenuEventKey(group.title)])
+                                }}
+                              >
                                 <span className="main-layout__nav-item-icon">{group.items[0]?.icon}</span>
                                 {showSidebarLabels ? <span>{group.title}</span> : null}
                               </div>
@@ -307,14 +322,10 @@ export function MainLayout({
                               <Nav.Item eventKey={item.eventKey} key={item.eventKey}>
                                 <div className="main-layout__nav-item-shell">
                                   <span className="main-layout__nav-item-icon">{item.icon}</span>
-                                  {showSidebarLabels ? (
-                                    <div className="main-layout__nav-item-label">
-                                      <span>{item.label}</span>
-                                      {item.badge ? (
-                                        <small className="main-layout__nav-item-badge">{item.badge}</small>
-                                      ) : null}
-                                    </div>
-                                  ) : null}
+                                  <div className="main-layout__nav-item-label">
+                                    <span>{item.label}</span>
+                                    {item.badge ? <small className="main-layout__nav-item-badge">{item.badge}</small> : null}
+                                  </div>
                                 </div>
                               </Nav.Item>
                             ))}
@@ -325,18 +336,6 @@ export function MainLayout({
                   </Sidenav.Body>
                 </Sidenav>
               </div>
-
-              {showSidebarLabels ? (
-                <Panel bordered className="main-layout__sidebar-card">
-                  <strong>Leitura mais objetiva</strong>
-                  <p>O submenu abre com foco no grupo atual e mantem os atalhos mais usados em evidencia.</p>
-                  <ul className="main-layout__sidebar-notes">
-                    {SIDEBAR_NOTES.map((note) => (
-                      <li key={note}>{note}</li>
-                    ))}
-                  </ul>
-                </Panel>
-              ) : null}
             </div>
           </Sidebar>
         ) : null}

@@ -20,7 +20,7 @@ import TrashIcon from '@rsuite/icons/Trash'
 import VisibleIcon from '@rsuite/icons/Visible'
 import { AppModal, DataState, PageSection, StatusBadge } from '../../components/ui'
 import { getErrorMessage, useAppAlert } from '../../hooks/useAppAlert'
-import 'rsuite-table/dist/css/rsuite-table.css'
+import '../../styles/vendor/rsuite-table.css'
 import './BonameCrudPage.css'
 
 export interface BonameRecord {
