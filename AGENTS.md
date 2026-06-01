@@ -3,9 +3,9 @@
 Responsável:
 Gustavo
 
-# Puppeeteer Obrigatório no Frontend
+# Puppeeteer e Excalidraw Obrigatório no Frontend
 
-Toda criação, alteração ou refatoração de página/componente frontend deve usar MCP Puppeeteer.
+Toda criação, alteração ou refatoração de página/componente/rotas/modais e fluxo de navegação do frontend deve usar MCP excalidraw e para validação deve usar puppeeteer mcp.
 
 O agente frontend deve:
 
@@ -20,7 +20,9 @@ O agente frontend deve:
 
 Nenhuma tarefa frontend deve ser considerada concluída sem validação via puppeeteer.
 
-REGRA OBRIGATÓRIA CONTEXT7:
+
+
+# REGRA OBRIGATÓRIA CONTEXT7:
 
 Antes de criar ou alterar frontend:
 
@@ -40,7 +42,6 @@ Bibliotecas obrigatórias para consulta:
 - Zod
 - Vitest
 
-Não gerar componentes utilizando APIs antigas quando houver documentação atualizada disponível.
 
 Objetivo:
 Implementar:

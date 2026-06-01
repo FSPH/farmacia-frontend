@@ -14,6 +14,7 @@ import {
   Popover,
   Sidebar,
   Sidenav,
+  Tooltip,
   VStack,
   Whisper,
   useMediaQuery,
@@ -283,7 +284,7 @@ export function MainLayout({
                         if (group.title === OVERVIEW_GROUP) {
                           return group.items.map((item) => (
                             <Nav.Item eventKey={item.eventKey} key={item.eventKey}>
-                              <div className="main-layout__nav-item-shell">
+                              <div className="main-layout__nav-item-shell" title={item.label}>
                                 <span className="main-layout__nav-item-icon">{item.icon}</span>
                                 {showSidebarLabels ? (
                                   <div className="main-layout__nav-item-label">
@@ -298,6 +299,22 @@ export function MainLayout({
                           ))
                         }
 
+                        if (!showSidebarLabels) {
+                          return group.items.map((item) => (
+                            <Nav.Item eventKey={item.eventKey} key={item.eventKey}>
+                              <Whisper
+                                trigger="hover"
+                                placement="right"
+                                speaker={<Tooltip>{item.label}</Tooltip>}
+                              >
+                                <div className="main-layout__nav-item-shell" title={item.label}>
+                                  <span className="main-layout__nav-item-icon">{item.icon}</span>
+                                </div>
+                              </Whisper>
+                            </Nav.Item>
+                          ))
+                        }
+
                         return (
                           <Nav.Menu
                             eventKey={getMenuEventKey(group.title)}
@@ -305,14 +322,7 @@ export function MainLayout({
                             trigger={showSidebarLabels ? 'hover' : 'click'}
                             placement={showSidebarLabels ? undefined : 'rightStart'}
                             title={
-                              <div
-                                className="main-layout__nav-menu-title"
-                                onClick={() => {
-                                  if (showSidebarLabels) return
-                                  setIsSidebarExpanded(true)
-                                  setOpenMenuKeys([getMenuEventKey(group.title)])
-                                }}
-                              >
+                              <div className="main-layout__nav-menu-title">
                                 <span className="main-layout__nav-item-icon">{group.items[0]?.icon}</span>
                                 {showSidebarLabels ? <span>{group.title}</span> : null}
                               </div>
@@ -320,7 +330,7 @@ export function MainLayout({
                           >
                             {group.items.map((item) => (
                               <Nav.Item eventKey={item.eventKey} key={item.eventKey}>
-                                <div className="main-layout__nav-item-shell">
+                                <div className="main-layout__nav-item-shell" title={item.label}>
                                   <span className="main-layout__nav-item-icon">{item.icon}</span>
                                   <div className="main-layout__nav-item-label">
                                     <span>{item.label}</span>
