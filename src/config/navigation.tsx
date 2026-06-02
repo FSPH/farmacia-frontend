@@ -1,4 +1,5 @@
 import type { ReactElement } from 'react'
+import type { IconProps } from '@rsuite/icons/Icon'
 import {
   RiArchiveDrawerLine,
   RiDashboardLine,
@@ -19,7 +20,7 @@ export type SectionMeta = {
 export type NavigationItem = {
   badge?: string
   eventKey: SectionKey
-  icon: ReactElement
+  icon: ReactElement<IconProps>
   label: string
 }
 

@@ -14,7 +14,6 @@ import {
   Popover,
   Sidebar,
   Sidenav,
-  Tooltip,
   VStack,
   Whisper,
   useMediaQuery,
@@ -283,34 +282,19 @@ export function MainLayout({
                       {NAVIGATION_GROUPS.map((group) => {
                         if (group.title === OVERVIEW_GROUP) {
                           return group.items.map((item) => (
-                            <Nav.Item eventKey={item.eventKey} key={item.eventKey}>
-                              <div className="main-layout__nav-item-shell" title={item.label}>
-                                <span className="main-layout__nav-item-icon">{item.icon}</span>
-                                {showSidebarLabels ? (
+                            <Nav.Item eventKey={item.eventKey} icon={item.icon} key={item.eventKey}>
+                              {showSidebarLabels ? (
+                                <div className="main-layout__nav-item-shell" title={item.label}>
                                   <div className="main-layout__nav-item-label">
                                     <span>{item.label}</span>
                                     {item.badge ? (
                                       <small className="main-layout__nav-item-badge">{item.badge}</small>
                                     ) : null}
                                   </div>
-                                ) : null}
-                              </div>
-                            </Nav.Item>
-                          ))
-                        }
-
-                        if (!showSidebarLabels) {
-                          return group.items.map((item) => (
-                            <Nav.Item eventKey={item.eventKey} key={item.eventKey}>
-                              <Whisper
-                                trigger="hover"
-                                placement="right"
-                                speaker={<Tooltip>{item.label}</Tooltip>}
-                              >
-                                <div className="main-layout__nav-item-shell" title={item.label}>
-                                  <span className="main-layout__nav-item-icon">{item.icon}</span>
                                 </div>
-                              </Whisper>
+                              ) : (
+                                item.label
+                              )}
                             </Nav.Item>
                           ))
                         }
@@ -318,20 +302,15 @@ export function MainLayout({
                         return (
                           <Nav.Menu
                             eventKey={getMenuEventKey(group.title)}
+                            icon={group.items[0].icon}
                             key={group.title}
-                            trigger={showSidebarLabels ? 'hover' : 'click'}
+                            trigger="hover"
                             placement={showSidebarLabels ? undefined : 'rightStart'}
-                            title={
-                              <div className="main-layout__nav-menu-title">
-                                <span className="main-layout__nav-item-icon">{group.items[0]?.icon}</span>
-                                {showSidebarLabels ? <span>{group.title}</span> : null}
-                              </div>
-                            }
+                            title={group.title}
                           >
                             {group.items.map((item) => (
-                              <Nav.Item eventKey={item.eventKey} key={item.eventKey}>
+                              <Nav.Item eventKey={item.eventKey} icon={item.icon} key={item.eventKey}>
                                 <div className="main-layout__nav-item-shell" title={item.label}>
-                                  <span className="main-layout__nav-item-icon">{item.icon}</span>
                                   <div className="main-layout__nav-item-label">
                                     <span>{item.label}</span>
                                     {item.badge ? <small className="main-layout__nav-item-badge">{item.badge}</small> : null}

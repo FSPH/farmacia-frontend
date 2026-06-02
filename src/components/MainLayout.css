@@ -549,6 +549,10 @@
   overflow: visible !important;
 }
 
+.main-layout__sidebar--collapsed .main-layout__sidebar-groups {
+  overflow: visible;
+}
+
 .main-layout__sidebar--collapsed .main-layout__sidebar-intro {
   justify-content: center;
   padding: 0.45rem;
@@ -575,11 +579,29 @@
 
 .main-layout__sidebar--collapsed .main-layout__nav .rs-dropdown-menu {
   z-index: 60 !important;
+  min-width: 12rem;
+  padding: 0.45rem;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 0.65rem;
+  background: #111c31;
+  box-shadow: 0 16px 34px rgba(2, 6, 23, 0.3);
   pointer-events: auto;
 }
 
 .main-layout__sidebar--collapsed .main-layout__nav .rs-dropdown-menu .rs-dropdown-item {
+  min-height: 2.5rem;
+  padding: 0.45rem 0.55rem;
+  border-radius: 0.45rem;
+  color: #e6edf7;
   pointer-events: auto;
+}
+
+.main-layout__sidebar--collapsed .main-layout__nav .rs-dropdown-menu .rs-dropdown-item:hover,
+.main-layout__sidebar--collapsed .main-layout__nav .rs-dropdown-menu .rs-dropdown-item:focus-visible,
+.main-layout__sidebar--collapsed .main-layout__nav .rs-dropdown-menu .rs-dropdown-item[data-active='true'],
+.main-layout__sidebar--collapsed .main-layout__nav .rs-dropdown-menu .rs-dropdown-item.rs-dropdown-item-active {
+  color: #ffffff;
+  background: rgba(37, 99, 235, 0.32);
 }
 
 /* RSuite can render collapsed Nav.Menu popups in a body-level layer */
@@ -621,6 +643,20 @@
   width: 20px;
   height: 20px;
   stroke-width: 2.2px;
+}
+
+.main-layout__sidebar--collapsed .main-layout__nav > .rs-sidenav-item .rs-sidenav-item-icon,
+.main-layout__sidebar--collapsed .main-layout__nav > .rs-dropdown > .rs-sidenav-dropdown-toggle .rs-sidenav-item-icon {
+  width: 24px !important;
+  height: 24px !important;
+  max-width: none !important;
+  color: #f8fbff !important;
+  filter: drop-shadow(0 0 0.12rem rgba(191, 219, 254, 0.62));
+}
+
+.main-layout__sidebar--collapsed .main-layout__nav > .rs-sidenav-item,
+.main-layout__sidebar--collapsed .main-layout__nav > .rs-dropdown > .rs-sidenav-dropdown-toggle {
+  padding-inline: 6px;
 }
 
 .main-layout__sidebar--collapsed .main-layout__nav .rs-nav-item.rs-nav-item-active .rs-nav-item-content,
@@ -936,7 +972,7 @@
   }
 }
 
-/* Keep sider menu/submenu surfaces transparent in all states */
+/* Keep inline sider surfaces transparent; collapsed flyouts receive their own panel below */
 .main-layout__nav .rs-nav-item-content,
 .main-layout__nav .rs-dropdown .rs-dropdown-toggle,
 .main-layout__nav .rs-sidenav-dropdown-toggle,
@@ -948,6 +984,11 @@
 .rs-dropdown-menu {
   background: transparent !important;
   box-shadow: none !important;
+}
+
+.main-layout__sidebar--collapsed .main-layout__nav .rs-dropdown-menu {
+  background: #111c31 !important;
+  box-shadow: 0 16px 34px rgba(2, 6, 23, 0.3) !important;
 }
 
 .main-layout__nav .rs-nav-item.rs-nav-item-active .rs-nav-item-content,
