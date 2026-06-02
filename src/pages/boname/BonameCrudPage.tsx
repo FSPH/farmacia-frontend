@@ -1,10 +1,9 @@
-import { useState, useTransition } from 'react'
+import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   Button,
   HStack,
   Input,
-  InputGroup,
   InputNumber,
   Pagination,
   Panel,
@@ -32,6 +31,12 @@ export interface BonameRecord {
   bona_ativo: 0 | 1
 }
 
+interface DiagnosticoRecord {
+  diag_id: number
+  diag_descr: string
+  diag_ativo: 0 | 1
+}
+
 interface ApiResponse<T> {
   data: T
   err: number
@@ -41,7 +46,6 @@ interface ApiResponse<T> {
 
 type FormErrors = Partial<Record<keyof BonameRecord, string>>
 type FormMode = 'create' | 'edit' | 'view'
-type StatusFilter = 'active' | 'all' | 'inactive'
 
 export interface BonameCrudPageProps {
   apiBaseUrl?: string
@@ -59,17 +63,7 @@ const DEFAULT_FORM_VALUES: BonameRecord = {
 
 const LOCAL_STORAGE_TOKEN_KEYS = ['authToken', 'access_token', 'token', 'jwtToken']
 
-const STATUS_FILTER_OPTIONS = [
-  { label: 'Todos os status', value: 'all' },
-  { label: 'Somente ativos', value: 'active' },
-  { label: 'Somente inativos', value: 'inactive' },
-] satisfies Array<{ label: string; value: StatusFilter }>
-
-const PAGE_SIZE_OPTIONS = [
-  { label: '10 por pagina', value: 10 },
-  { label: '20 por pagina', value: 20 },
-  { label: '50 por pagina', value: 50 },
-] satisfies Array<{ label: string; value: number }>
+const PAGE_SIZE = 10
 
 function getStoredToken(): string | null {
   if (typeof window === 'undefined') {
@@ -102,10 +96,10 @@ function toUppercaseValue(value: string): string {
   return value.toLocaleUpperCase('pt-BR')
 }
 
-function validateForm(values: BonameRecord): FormErrors {
+function validateForm(values: BonameRecord, mode: FormMode | null): FormErrors {
   const errors: FormErrors = {}
 
-  if (values.bona_id <= 0) {
+  if (mode !== 'create' && values.bona_id <= 0) {
     errors.bona_id = 'Informe um ID maior que zero.'
   }
 
@@ -186,6 +180,15 @@ async function buscarBoname(baseUrl: string, bonaId: number, authToken?: string 
   )
 }
 
+async function listarDiagnosticosAtivos(baseUrl: string, authToken?: string | null): Promise<DiagnosticoRecord[]> {
+  return requestBoname<DiagnosticoRecord[]>(
+    baseUrl,
+    '/parametros/diagnosticos/listar_ativos/*',
+    { method: 'GET' },
+    authToken,
+  )
+}
+
 async function salvarBoname(baseUrl: string, values: BonameRecord, authToken?: string | null): Promise<void> {
   await requestBoname<unknown>(
     baseUrl,
@@ -217,10 +220,7 @@ export function BonameCrudPage({
   const queryClient = useQueryClient()
   const [searchValue, setSearchValue] = useState('')
   const [submittedSearch, setSubmittedSearch] = useState('*')
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
-  const [pageSize, setPageSize] = useState(10)
   const [activePage, setActivePage] = useState(1)
-  const [isSearchPending, startSearchTransition] = useTransition()
   const [modalMode, setModalMode] = useState<FormMode | null>(null)
   const [deleteCandidate, setDeleteCandidate] = useState<BonameRecord | null>(null)
   const [formValues, setFormValues] = useState<BonameRecord>(DEFAULT_FORM_VALUES)
@@ -230,6 +230,17 @@ export function BonameCrudPage({
   const listQuery = useQuery({
     queryKey: ['boname-list', apiBaseUrl, submittedSearch, resolvedAuthToken],
     queryFn: () => listarBonames(apiBaseUrl, submittedSearch, resolvedAuthToken),
+  })
+
+  const diagnosticosQuery = useQuery({
+    queryKey: ['diagnosticos-ativos', apiBaseUrl, resolvedAuthToken],
+    queryFn: () => listarDiagnosticosAtivos(apiBaseUrl, resolvedAuthToken),
+    enabled: modalMode !== null,
+    select: (diagnosticos) =>
+      diagnosticos.map((diagnostico) => ({
+        label: diagnostico.diag_descr,
+        value: diagnostico.diag_id,
+      })),
   })
 
   const saveMutation = useMutation({
@@ -257,36 +268,17 @@ export function BonameCrudPage({
   })
 
   const records = listQuery.data ?? []
-  const filteredRecords = records.filter((record) => {
-    if (statusFilter === 'all') {
-      return true
-    }
-
-    return statusFilter === 'active' ? record.bona_ativo === 1 : record.bona_ativo === 0
-  })
-  const totalPages = Math.max(1, Math.ceil(filteredRecords.length / pageSize))
+  const totalPages = Math.max(1, Math.ceil(records.length / PAGE_SIZE))
   const currentPage = Math.min(activePage, totalPages)
-  const pageStart = (currentPage - 1) * pageSize
-  const paginatedRecords = filteredRecords.slice(pageStart, pageStart + pageSize)
-  const hasData = filteredRecords.length > 0
+  const pageStart = (currentPage - 1) * PAGE_SIZE
+  const paginatedRecords = records.slice(pageStart, pageStart + PAGE_SIZE)
+  const hasData = records.length > 0
   const isReadOnly = modalMode === 'view'
   const tableHeight = Math.min(Math.max(paginatedRecords.length * 54 + 104, 260), 560)
 
   const handleSearch = () => {
-    startSearchTransition(() => {
-      setSubmittedSearch(normalizeSearchTerm(searchValue))
-      setActivePage(1)
-    })
-  }
-
-  const handleResetSearch = () => {
-    setSearchValue('')
-    setStatusFilter('all')
-
-    startSearchTransition(() => {
-      setSubmittedSearch('*')
-      setActivePage(1)
-    })
+    setSubmittedSearch(normalizeSearchTerm(searchValue))
+    setActivePage(1)
   }
 
   const closeFormModal = () => {
@@ -319,7 +311,7 @@ export function BonameCrudPage({
   }
 
   const handleSubmit = async () => {
-    const nextErrors = validateForm(formValues)
+    const nextErrors = validateForm(formValues, modalMode)
     setFormErrors(nextErrors)
 
     if (Object.keys(nextErrors).length > 0) {
@@ -340,8 +332,6 @@ export function BonameCrudPage({
 
   const tableLabelStart = hasData ? pageStart + 1 : 0
   const tableLabelEnd = hasData ? pageStart + paginatedRecords.length : 0
-  const hasActiveFilters = submittedSearch !== '*' || statusFilter !== 'all'
-
   const renderRowActions = (rowData: BonameRecord, compact = false) => (
     <HStack spacing={8} wrap className={`boname-page__row-actions ${compact ? 'boname-page__row-actions--compact' : ''}`.trim()}>
       <Button
@@ -379,100 +369,36 @@ export function BonameCrudPage({
   return (
     <section className="boname-page">
       <PageSection
-        title="Filtros e acoes"
-        description="Padrao reutilizavel com busca, segmentacao e acoes principais da tela."
         actions={
-          <HStack spacing={10} wrap>
-            <Button appearance="primary" startIcon={<SearchIcon />} loading={isSearchPending} onClick={handleSearch}>
-              Buscar
-            </Button>
-            <Button appearance="subtle" startIcon={<ReloadIcon />} onClick={handleResetSearch}>
-              Limpar
-            </Button>
-            <Button
-              appearance="ghost"
-              startIcon={<ReloadIcon />}
-              loading={listQuery.isFetching && !listQuery.isPending}
-              onClick={() => {
-                void listQuery.refetch()
-              }}
-            >
-              Atualizar
-            </Button>
-            <Button appearance="primary" color="green" startIcon={<PlusIcon />} onClick={handleOpenCreate}>
-              Novo Boname
-            </Button>
-          </HStack>
+          <div className="boname-page__toolbar">
+            <Input
+              aria-label="Buscar Boname por descricao"
+              className="boname-page__search-input"
+              placeholder="Buscar por descricao"
+              value={searchValue}
+              onChange={setSearchValue}
+              onPressEnter={handleSearch}
+            />
+            <HStack spacing={10} wrap>
+              <Button appearance="primary" startIcon={<SearchIcon />} onClick={handleSearch}>
+                Buscar
+              </Button>
+              <Button
+                appearance="ghost"
+                startIcon={<ReloadIcon />}
+                loading={listQuery.isFetching && !listQuery.isPending}
+                onClick={() => {
+                  void listQuery.refetch()
+                }}
+              >
+                Atualizar
+              </Button>
+              <Button appearance="primary" color="green" startIcon={<PlusIcon />} onClick={handleOpenCreate}>
+                Novo Boname
+              </Button>
+            </HStack>
+          </div>
         }
-      >
-        <div className="boname-page__filters">
-          <div className="boname-page__field boname-page__field--search">
-            <label htmlFor="boname-search">Descricao</label>
-            <InputGroup inside size="lg">
-              <InputGroup.Addon>
-                <SearchIcon />
-              </InputGroup.Addon>
-              <Input
-                id="boname-search"
-                aria-label="Buscar Boname"
-                placeholder="Digite a descricao do Boname"
-                value={searchValue}
-                onChange={setSearchValue}
-                onPressEnter={handleSearch}
-              />
-            </InputGroup>
-          </div>
-
-          <div className="boname-page__field">
-            <label htmlFor="boname-status-filter">Status</label>
-            <SelectPicker
-              id="boname-status-filter"
-              block
-              cleanable={false}
-              data={STATUS_FILTER_OPTIONS}
-              searchable={false}
-              value={statusFilter}
-              onChange={(value) => {
-                setStatusFilter((value as StatusFilter) || 'all')
-                setActivePage(1)
-              }}
-            />
-          </div>
-
-          <div className="boname-page__field">
-            <label htmlFor="boname-page-size">Registros por pagina</label>
-            <SelectPicker
-              id="boname-page-size"
-              block
-              cleanable={false}
-              data={PAGE_SIZE_OPTIONS}
-              searchable={false}
-              value={pageSize}
-              onChange={(value) => {
-                setPageSize(Number(value || 10))
-                setActivePage(1)
-              }}
-            />
-          </div>
-        </div>
-
-        <div className="boname-page__filter-summary" aria-live="polite">
-          <StatusBadge tone={hasActiveFilters ? 'info' : 'neutral'}>
-            {hasActiveFilters ? 'Filtros aplicados' : 'Sem filtros adicionais'}
-          </StatusBadge>
-          <StatusBadge tone="info">
-            {filteredRecords.length} registro{filteredRecords.length === 1 ? '' : 's'}
-          </StatusBadge>
-          {submittedSearch !== '*' ? <StatusBadge tone="neutral">Busca: {submittedSearch}</StatusBadge> : null}
-          {statusFilter === 'active' ? <StatusBadge tone="success">Somente ativos</StatusBadge> : null}
-          {statusFilter === 'inactive' ? <StatusBadge tone="danger">Somente inativos</StatusBadge> : null}
-        </div>
-
-      </PageSection>
-
-      <PageSection
-        title="Listagem"
-        description="Tabela corporativa com acoes por linha, estados visuais e paginacao."
       >
         {listQuery.isPending ? (
           <DataState
@@ -499,7 +425,7 @@ export function BonameCrudPage({
           <DataState
             state="empty"
             title="Nenhum Boname encontrado"
-            description="Ajuste os filtros atuais ou cadastre um novo registro para preencher a tabela."
+            description="Cadastre um novo registro para preencher a tabela."
             action={
               <Button appearance="primary" onClick={handleOpenCreate}>
                 Cadastrar Boname
@@ -548,8 +474,8 @@ export function BonameCrudPage({
                 <Table
                   data={paginatedRecords}
                   height={tableHeight}
+                  virtualized
                   bordered
-                  cellBordered
                   rowHeight={54}
                   headerHeight={52}
                   autoHeight={false}
@@ -575,11 +501,6 @@ export function BonameCrudPage({
                   </Column>
 
                   <Column width={140} align="center">
-                    <HeaderCell>Diag. ID</HeaderCell>
-                    <Cell dataKey="bona_diag_id" />
-                  </Column>
-
-                  <Column width={140} align="center">
                     <HeaderCell>Status</HeaderCell>
                     <Cell>
                       {(rowData: BonameRecord) => (
@@ -601,7 +522,7 @@ export function BonameCrudPage({
             <div className="boname-page__table-footer">
               <p>
                 Exibindo <strong>{tableLabelStart}</strong> a <strong>{tableLabelEnd}</strong> de{' '}
-                <strong>{filteredRecords.length}</strong> registros.
+                <strong>{records.length}</strong> registros.
               </p>
               <Pagination
                 activePage={currentPage}
@@ -609,12 +530,12 @@ export function BonameCrudPage({
                 ellipsis
                 first
                 last
-                limit={pageSize}
+                limit={PAGE_SIZE}
                 layout={['pager']}
                 maxButtons={5}
                 next
                 prev
-                total={filteredRecords.length}
+                total={records.length}
                 onChangePage={setActivePage}
               />
             </div>
@@ -631,6 +552,7 @@ export function BonameCrudPage({
             ? 'Consulta em modo leitura do cadastro selecionado.'
             : 'Formulario padronizado com validacao visual e acoes alinhadas.'
         }
+        intentVisible={false}
         loading={isFormLoading}
         onClose={closeFormModal}
         size="md"
@@ -657,14 +579,15 @@ export function BonameCrudPage({
             <InputNumber
               id="boname-id"
               min={0}
+              size="sm"
+              controls={false}
               className={formErrors.bona_id ? 'boname-page__control boname-page__control--error' : 'boname-page__control'}
               value={formValues.bona_id}
-              disabled={modalMode === 'edit' || isReadOnly}
+              disabled
               onChange={(value) => {
                 setFormValues((current) => ({ ...current, bona_id: Number(value || 0) }))
               }}
             />
-            <small>O backend exige `bona_id` informado no salvar.</small>
             {formErrors.bona_id ? <span>{formErrors.bona_id}</span> : null}
           </div>
 
@@ -672,7 +595,8 @@ export function BonameCrudPage({
             <label htmlFor="boname-codigo">Codigo</label>
             <Input
               id="boname-codigo"
-              className={formErrors.bona_codigo ? 'boname-page__control boname-page__control--error' : 'boname-page__control'}
+              size="sm"
+              className={formErrors.bona_codigo ? 'boname-page__control boname-page__control--compact boname-page__control--error' : 'boname-page__control boname-page__control--compact'}
               value={formValues.bona_codigo}
               disabled={isReadOnly}
               onChange={(value) => {
@@ -703,6 +627,7 @@ export function BonameCrudPage({
             <InputNumber
               id="boname-qt-ui"
               min={0}
+              controls={false}
               className={formErrors.bona_qt_ui ? 'boname-page__control boname-page__control--error' : 'boname-page__control'}
               value={formValues.bona_qt_ui}
               disabled={isReadOnly}
@@ -714,26 +639,29 @@ export function BonameCrudPage({
           </div>
 
           <div className="boname-page__field">
-            <label htmlFor="boname-diag-id">Diagnostico ID</label>
-            <InputNumber
+            <label htmlFor="boname-diag-id">Diagnostico</label>
+            <SelectPicker
               id="boname-diag-id"
-              min={0}
+              block
+              cleanable={false}
+              data={diagnosticosQuery.data ?? []}
+              loading={diagnosticosQuery.isPending}
+              placeholder="Selecione o diagnostico"
+              searchable
               className={formErrors.bona_diag_id ? 'boname-page__control boname-page__control--error' : 'boname-page__control'}
-              value={formValues.bona_diag_id}
+              value={formValues.bona_diag_id || null}
               disabled={isReadOnly}
               onChange={(value) => {
                 setFormValues((current) => ({ ...current, bona_diag_id: Number(value || 0) }))
               }}
             />
             {formErrors.bona_diag_id ? <span>{formErrors.bona_diag_id}</span> : null}
+            {diagnosticosQuery.isError ? <span>Falha ao carregar os diagnosticos ativos.</span> : null}
           </div>
 
           <div className="boname-page__field boname-page__field--full">
             <label>Status do registro</label>
             <div className="boname-page__status-panel">
-              <StatusBadge tone={formValues.bona_ativo === 1 ? 'success' : 'danger'}>
-                {formValues.bona_ativo === 1 ? 'Registro ativo' : 'Registro inativo'}
-              </StatusBadge>
               {!isReadOnly ? (
                 <div className="boname-page__status-actions">
                   <Button

@@ -6,7 +6,7 @@ export interface PageSectionProps {
   children: ReactNode
   className?: string
   description?: string
-  title: string
+  title?: string
 }
 
 export function PageSection({
@@ -18,13 +18,17 @@ export function PageSection({
 }: PageSectionProps) {
   return (
     <Panel bordered className={`page-section ${className}`.trim()}>
-      <HStack justifyContent="space-between" alignItems="flex-start" className="page-section__header" wrap>
-        <VStack spacing={4} alignItems="flex-start" className="page-section__copy">
-          <h3>{title}</h3>
-          {description ? <p>{description}</p> : null}
-        </VStack>
-        {actions ? <div className="page-section__actions">{actions}</div> : null}
-      </HStack>
+      {title || description || actions ? (
+        <HStack justifyContent="space-between" alignItems="flex-start" className="page-section__header" wrap>
+          {title || description ? (
+            <VStack spacing={4} alignItems="flex-start" className="page-section__copy">
+              {title ? <h3>{title}</h3> : null}
+              {description ? <p>{description}</p> : null}
+            </VStack>
+          ) : null}
+          {actions ? <div className="page-section__actions">{actions}</div> : null}
+        </HStack>
+      ) : null}
       <div className="page-section__body">{children}</div>
     </Panel>
   )

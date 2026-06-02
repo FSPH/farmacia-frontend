@@ -98,7 +98,8 @@
 .page-section__actions {
   display: flex;
   justify-content: flex-end;
-  width: auto;
+  margin-left: auto;
+  width: 100%;
 }
 
 .page-section__body {

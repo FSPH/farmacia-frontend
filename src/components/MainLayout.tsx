@@ -355,7 +355,7 @@ export function MainLayout({
                     </Breadcrumb>
                     <div>
                       <h1>{pageTitle}</h1>
-                      <p>{pageDescription}</p>
+                      {pageDescription ? <p>{pageDescription}</p> : null}
                     </div>
                   </VStack>
 

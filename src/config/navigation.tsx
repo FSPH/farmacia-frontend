@@ -56,7 +56,7 @@ export const APP_SECTIONS: Record<SectionKey, SectionMeta> = {
   },
   'parametros/boname': {
     breadcrumbItems: ['Inicio', 'Cadastros', 'Boname'],
-    description: 'Tela padronizada para consulta, cadastro, edicao e visualizacao dos parametros de Boname.',
+    description: '',
     status: 'Cadastro mestre',
     title: 'Cadastro de Boname',
   },

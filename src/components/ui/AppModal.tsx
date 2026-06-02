@@ -7,6 +7,7 @@ export interface AppModalProps {
   children: ReactNode
   footer?: ReactNode
   intent?: AppModalIntent
+  intentVisible?: boolean
   loading?: boolean
   onClose: () => void
   open: boolean
@@ -29,6 +30,7 @@ export function AppModal({
   children,
   footer,
   intent = 'view',
+  intentVisible = true,
   loading = false,
   onClose,
   open,
@@ -44,7 +46,7 @@ export function AppModal({
             <Modal.Title>{title}</Modal.Title>
             {subtitle ? <p>{subtitle}</p> : null}
           </div>
-          <span className="app-modal__intent">{INTENT_LABELS[intent]}</span>
+          {intentVisible ? <span className="app-modal__intent">{INTENT_LABELS[intent]}</span> : null}
         </div>
       </Modal.Header>
 
