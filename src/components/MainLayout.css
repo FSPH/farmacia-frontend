@@ -900,9 +900,20 @@
   text-transform: uppercase;
 }
 
-.main-layout__notifications-popover {
+.rs-popover.main-layout__notifications-popover {
+  --rs-popover-shadow: 0 20px 48px rgba(15, 23, 42, 0.18);
   width: min(21rem, calc(100vw - 2rem));
   border-radius: 1.15rem;
+  border: 1px solid rgba(148, 163, 184, 0.26);
+  background-color: rgba(255, 255, 255, 0.98) !important;
+  filter: drop-shadow(var(--rs-popover-shadow));
+  overflow: hidden;
+}
+
+.rs-popover.main-layout__notifications-popover .rs-popover-content {
+  border-radius: inherit;
+  background: transparent;
+  padding: 0.75rem;
 }
 
 .main-layout__notification {

@@ -4,6 +4,7 @@ import { Loader, Modal } from 'rsuite'
 export type AppModalIntent = 'confirm' | 'create' | 'delete' | 'edit' | 'map' | 'payment' | 'view'
 
 export interface AppModalProps {
+  backdrop?: boolean | 'static'
   children: ReactNode
   footer?: ReactNode
   intent?: AppModalIntent
@@ -27,6 +28,7 @@ const INTENT_LABELS: Record<AppModalIntent, string> = {
 }
 
 export function AppModal({
+  backdrop = true,
   children,
   footer,
   intent = 'view',
@@ -39,7 +41,7 @@ export function AppModal({
   title,
 }: AppModalProps) {
   return (
-    <Modal open={open} size={size} onClose={onClose} className={`app-modal app-modal--${intent}`}>
+    <Modal backdrop={backdrop} open={open} size={size} onClose={onClose} className={`app-modal app-modal--${intent}`}>
       <Modal.Header>
         <div className="app-modal__header">
           <div className="app-modal__copy">

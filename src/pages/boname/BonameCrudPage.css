@@ -151,7 +151,8 @@
 }
 
 .boname-page__control,
-.boname-page__control .rs-input {
+.boname-page__control .rs-input,
+.boname-page__control .rs-picker-toggle {
   border-radius: 0.5rem;
 }
 

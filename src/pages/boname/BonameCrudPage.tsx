@@ -96,12 +96,8 @@ function toUppercaseValue(value: string): string {
   return value.toLocaleUpperCase('pt-BR')
 }
 
-function validateForm(values: BonameRecord, mode: FormMode | null): FormErrors {
+function validateForm(values: BonameRecord): FormErrors {
   const errors: FormErrors = {}
-
-  if (mode !== 'create' && values.bona_id <= 0) {
-    errors.bona_id = 'Informe um ID maior que zero.'
-  }
 
   if (!values.bona_codigo.trim()) {
     errors.bona_codigo = 'Informe o codigo do Boname.'
@@ -311,7 +307,7 @@ export function BonameCrudPage({
   }
 
   const handleSubmit = async () => {
-    const nextErrors = validateForm(formValues, modalMode)
+    const nextErrors = validateForm(formValues)
     setFormErrors(nextErrors)
 
     if (Object.keys(nextErrors).length > 0) {
@@ -545,6 +541,7 @@ export function BonameCrudPage({
 
       <AppModal
         open={modalMode !== null}
+        backdrop="static"
         intent={modalMode === 'create' ? 'create' : modalMode === 'edit' ? 'edit' : 'view'}
         title={modalMode === 'create' ? 'Novo Boname' : modalMode === 'edit' ? 'Editar Boname' : 'Visualizar Boname'}
         subtitle={

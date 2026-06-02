@@ -16,7 +16,7 @@ O agente frontend deve:
 5. testar responsividade
 6. testar formulário, tabela, modal ou drawer alterado
 7. corrigir problemas encontrados
-8. só finalizar após validação via puppeeteer.
+8. só finalizar após validação via puppeeteer sem gerar screenshots.
 
 # REGRA OBRIGATÓRIA CONTEXT7:
 
