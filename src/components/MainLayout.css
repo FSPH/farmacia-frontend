@@ -935,3 +935,110 @@
     font-size: 1.65rem;
   }
 }
+
+/* Keep sider menu/submenu surfaces transparent in all states */
+.main-layout__nav .rs-nav-item-content,
+.main-layout__nav .rs-dropdown .rs-dropdown-toggle,
+.main-layout__nav .rs-sidenav-dropdown-toggle,
+.main-layout__sidenav .main-layout__nav .rs-sidenav-item,
+.main-layout__sidebar--expanded .main-layout__nav .rs-dropdown-menu,
+.main-layout__sidebar--expanded .main-layout__nav .rs-dropdown-menu > li > .rs-dropdown-item,
+.main-layout__sidebar--collapsed .main-layout__nav .rs-dropdown-menu,
+.main-layout__sidebar--collapsed .main-layout__nav .rs-dropdown-menu .rs-dropdown-item,
+.rs-dropdown-menu {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.main-layout__nav .rs-nav-item.rs-nav-item-active .rs-nav-item-content,
+.main-layout__nav .rs-nav-item:hover .rs-nav-item-content,
+.main-layout__sidenav .main-layout__nav .rs-sidenav-item[data-active='true'],
+.main-layout__sidenav .main-layout__nav .rs-sidenav-item:hover,
+.main-layout__sidenav .main-layout__nav .rs-sidenav-item:focus-visible,
+.main-layout__nav .rs-dropdown .rs-dropdown-toggle:hover,
+.main-layout__nav .rs-dropdown.rs-dropdown-open > .rs-dropdown-toggle,
+.main-layout__nav .rs-dropdown.rs-dropdown-open > .rs-sidenav-dropdown-toggle,
+.main-layout__sidebar--expanded .main-layout__nav .rs-dropdown-menu > li > .rs-dropdown-item:hover,
+.main-layout__sidebar--expanded .main-layout__nav .rs-dropdown-menu > li > .rs-dropdown-item:focus-visible,
+.main-layout__sidebar--expanded .main-layout__nav .rs-dropdown-menu > li > .rs-dropdown-item[data-focus='true'],
+.main-layout__sidebar--expanded .main-layout__nav .rs-dropdown-menu > li > .rs-dropdown-item[data-active='true'],
+.main-layout__sidebar--expanded .main-layout__nav .rs-dropdown-menu > li > .rs-dropdown-item.rs-dropdown-item-active,
+.main-layout__sidebar--collapsed .main-layout__nav .rs-dropdown-menu .rs-dropdown-item:hover,
+.main-layout__sidebar--collapsed .main-layout__nav .rs-dropdown-menu .rs-dropdown-item:focus-visible,
+.main-layout__sidebar--collapsed .main-layout__nav .rs-dropdown-menu .rs-dropdown-item[data-active='true'],
+.rs-dropdown-menu .rs-dropdown-item:hover,
+.rs-dropdown-menu .rs-dropdown-item:focus-visible,
+.rs-dropdown-menu .rs-dropdown-item.rs-dropdown-item-active,
+.rs-dropdown-menu .rs-dropdown-item[data-active='true'] {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.rs-popover,
+.rs-popover .rs-popover-content,
+.rs-dropdown-menu .rs-dropdown-menu-toggle {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.main-layout__sidenav .main-layout__nav .rs-sidenav-item,
+.main-layout__sidenav .main-layout__nav .rs-sidenav-item:not([data-active='true']),
+.main-layout__sidenav .main-layout__nav .rs-sidenav-item[data-active='true'],
+.main-layout__sidenav .main-layout__nav .rs-sidenav-item:hover,
+.main-layout__sidenav .main-layout__nav .rs-sidenav-item:focus-visible,
+.main-layout__sidenav .main-layout__nav .rs-sidenav-dropdown-toggle.rs-sidenav-item,
+.main-layout__sidenav .main-layout__nav .rs-dropdown.rs-dropdown-open > .rs-sidenav-dropdown-toggle.rs-sidenav-item {
+  background: transparent !important;
+  box-shadow: none !important;
+  background-image: none !important;
+}
+
+/* Visual feedback by typography only: same emphasis for hover and active */
+.main-layout__nav .rs-nav-item .main-layout__nav-item-label span,
+.main-layout__nav .rs-nav-item .main-layout__nav-menu-title > span:last-child,
+.main-layout__nav .rs-sidenav-item .main-layout__nav-item-label span,
+.main-layout__nav .rs-sidenav-item .main-layout__nav-menu-title > span:last-child,
+.main-layout__nav .rs-sidenav-item .rs-sidenav-dropdown-toggle-title,
+.main-layout__nav .rs-dropdown-menu .rs-dropdown-item .main-layout__nav-item-label span {
+  font-weight: 500 !important;
+  color: #dbe7f7 !important;
+  transition: color 140ms ease, font-weight 140ms ease, text-shadow 140ms ease;
+}
+
+.main-layout__nav .rs-nav-item:hover .main-layout__nav-item-label span,
+.main-layout__nav .rs-nav-item.rs-nav-item-active .main-layout__nav-item-label span,
+.main-layout__nav .rs-sidenav-item:hover .main-layout__nav-item-label span,
+.main-layout__nav .rs-sidenav-item[data-active='true'] .main-layout__nav-item-label span,
+.main-layout__nav .rs-sidenav-item:hover .main-layout__nav-menu-title > span:last-child,
+.main-layout__nav .rs-sidenav-item[data-active='true'] .main-layout__nav-menu-title > span:last-child,
+.main-layout__nav .rs-sidenav-item:hover .rs-sidenav-dropdown-toggle-title,
+.main-layout__nav .rs-sidenav-item[data-active='true'] .rs-sidenav-dropdown-toggle-title,
+.main-layout__nav .rs-dropdown.rs-dropdown-open .main-layout__nav-menu-title > span:last-child,
+.main-layout__nav .rs-dropdown-menu .rs-dropdown-item:hover .main-layout__nav-item-label span,
+.main-layout__nav .rs-dropdown-menu .rs-dropdown-item[data-active='true'] .main-layout__nav-item-label span,
+.main-layout__nav .rs-dropdown-menu .rs-dropdown-item.rs-dropdown-item-active .main-layout__nav-item-label span,
+.main-layout__nav .rs-dropdown-menu .rs-dropdown-item:focus-visible .main-layout__nav-item-label span {
+  font-weight: 800 !important;
+  color: #ffffff !important;
+  text-shadow: 0 0 0.02px #fff, 0 0 0.55rem rgba(148, 197, 255, 0.28);
+}
+
+.main-layout__nav .rs-sidenav-item .main-layout__nav-item-label span,
+.main-layout__nav .rs-sidenav-item .main-layout__nav-menu-title > span:last-child,
+.main-layout__nav .rs-dropdown-menu .rs-dropdown-item .main-layout__nav-item-label span {
+  text-decoration-line: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.24em;
+  transition: text-decoration-color 140ms ease;
+}
+
+.main-layout__nav .rs-sidenav-item:hover .main-layout__nav-item-label span,
+.main-layout__nav .rs-sidenav-item[data-active='true'] .main-layout__nav-item-label span,
+.main-layout__nav .rs-sidenav-item:hover .main-layout__nav-menu-title > span:last-child,
+.main-layout__nav .rs-sidenav-item[data-active='true'] .main-layout__nav-menu-title > span:last-child,
+.main-layout__nav .rs-dropdown-menu .rs-dropdown-item:hover .main-layout__nav-item-label span,
+.main-layout__nav .rs-dropdown-menu .rs-dropdown-item[data-active='true'] .main-layout__nav-item-label span,
+.main-layout__nav .rs-dropdown-menu .rs-dropdown-item.rs-dropdown-item-active .main-layout__nav-item-label span {
+  text-decoration-color: rgba(191, 219, 254, 0.9);
+}

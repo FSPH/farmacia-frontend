@@ -3,7 +3,7 @@
 Responsável:
 Gustavo
 
-# Puppeeteer e Excalidraw Obrigatório no Frontend
+# Puppeeteer Obrigatório no Frontend
 
 Toda criação, alteração ou refatoração de página/componente/rotas/modais e fluxo de navegação do frontend deve usar MCP excalidraw e para validação deve usar puppeeteer mcp.
 
