@@ -204,11 +204,142 @@
 .boname-page__form-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem 1.1rem;
+}
+
+.boname-page__record-modal.rs-modal,
+.boname-page__record-modal .rs-modal-content {
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgba(248, 251, 255, 0.96), rgba(255, 255, 255, 0.98) 12rem),
+    #ffffff;
+}
+
+.boname-page__record-modal .rs-modal-header {
+  margin: -1.25rem -1.25rem 0;
+  padding: 1.25rem 1.25rem 1rem;
+  border-bottom: 1px solid rgba(198, 212, 228, 0.74);
+  background: linear-gradient(135deg, rgba(219, 234, 254, 0.92), rgba(204, 251, 241, 0.58));
+}
+
+.boname-page__record-modal .rs-modal-header-close {
+  min-width: 2.5rem;
+  min-height: 2.5rem;
+  border-radius: 0.7rem;
+}
+
+.boname-page__record-modal .rs-modal-body {
+  display: grid;
   gap: 1rem;
+  margin-top: 1rem;
+  max-height: min(38rem, calc(100vh - 15rem));
+  padding-right: 0.15rem;
+}
+
+.boname-page__record-modal .rs-modal-footer {
+  margin: 1.05rem -1.25rem -1.25rem;
+  padding: 1rem 1.25rem;
+  border-top: 1px solid rgba(198, 212, 228, 0.74);
+  background: rgba(248, 251, 255, 0.86);
+}
+
+.boname-page__modal-shell {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.boname-page__modal-main {
+  display: grid;
+  gap: 0.9rem;
+  min-width: 0;
+}
+
+.boname-page__modal-summary {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr 0.75fr;
+  gap: 0.75rem;
+}
+
+.boname-page__modal-summary div {
+  display: grid;
+  align-content: center;
+  min-height: 4.15rem;
+  padding: 0 0.35rem;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.boname-page__modal-summary span {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.boname-page__modal-summary strong {
+  margin-top: 0.28rem;
+  color: var(--text-strong);
+  font-size: 1rem;
+  line-height: 1.15;
+}
+
+.boname-page__modal-summary .status-badge {
+  display: inline-flex;
+  justify-self: start;
+  min-height: 0;
+  padding: 0.3rem 0.65rem;
+  width: auto;
+}
+
+.boname-page__form-card {
+  display: grid;
+  gap: 1rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.boname-page__form-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid rgba(198, 212, 228, 0.74);
+}
+
+.boname-page__form-card-header span {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.boname-page__form-card-header h3 {
+  margin: 0.2rem 0 0;
+  color: var(--text-strong);
+  font-size: 1rem;
 }
 
 .boname-page__field--full {
   grid-column: 1 / -1;
+}
+
+.boname-page__status-fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.boname-page__status-fieldset legend {
+  margin: 0 0 0.45rem;
+  padding: 0;
+  color: var(--text-strong);
+  font-size: 0.9rem;
+  font-weight: 700;
 }
 
 .boname-page__control,
@@ -224,6 +355,16 @@
   min-height: 1.875rem;
 }
 
+.boname-page__record-modal .boname-page__control,
+.boname-page__record-modal .boname-page__control .rs-input,
+.boname-page__record-modal .boname-page__control .rs-picker-toggle {
+  min-height: 38px;
+}
+
+.boname-page__record-modal .boname-page__control--compact {
+  height: 38px;
+}
+
 .boname-page__control--error,
 .boname-page__control--error .rs-input,
 .boname-page__control--error.rs-input-number,
@@ -234,20 +375,43 @@
 
 .boname-page__status-panel {
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
   gap: 0.85rem;
   flex-wrap: wrap;
   align-items: center;
-  padding: 1rem;
-  border: 1px solid var(--border-soft);
-  border-radius: 1rem;
-  background: rgba(248, 251, 255, 0.78);
+  padding: 0.85rem 0;
+  border: 0;
+  border-top: 1px solid rgba(198, 212, 228, 0.74);
+  background: transparent;
+}
+
+.boname-page__status-copy {
+  display: grid;
+  gap: 0.45rem;
+  min-width: min(100%, 16rem);
+}
+
+.boname-page__status-copy .status-badge {
+  justify-self: start;
+}
+
+.boname-page__status-copy small {
+  color: var(--text-muted);
+  line-height: 1.45;
 }
 
 .boname-page__status-actions {
   display: flex;
   gap: 0.65rem;
   flex-wrap: wrap;
+}
+
+.boname-page__record-modal .boname-page__status-actions .rs-btn {
+  min-height: 36px;
+}
+
+.boname-page__record-modal .app-modal__footer .rs-btn {
+  min-height: 36px;
 }
 
 .boname-page__confirm-card {
@@ -296,9 +460,37 @@
   }
 
   .boname-page__form-grid,
+  .boname-page__modal-summary,
   .boname-page__confirm-grid,
   .boname-page__record-meta {
     grid-template-columns: 1fr;
+  }
+
+  .boname-page__record-modal .rs-modal-header {
+    margin: -1rem -1rem 0;
+    padding: 1rem;
+  }
+
+  .boname-page__record-modal .rs-modal-body {
+    max-height: calc(100vh - 13.5rem);
+  }
+
+  .boname-page__record-modal .rs-modal-footer {
+    margin: 1rem -1rem -1rem;
+    padding: 1rem;
+  }
+
+  .boname-page__record-modal .app-modal__footer {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .boname-page__record-modal .app-modal__footer .rs-btn {
+    width: 100%;
+  }
+
+  .boname-page__record-modal .app-modal__footer .rs-btn:only-child {
+    grid-column: 1 / -1;
   }
 
   .boname-page__table-footer {

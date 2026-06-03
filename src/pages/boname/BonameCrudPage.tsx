@@ -566,6 +566,7 @@ export function BonameCrudPage({
             : 'Formulario padronizado com validacao visual e acoes alinhadas.'
         }
         intentVisible={false}
+        className="boname-page__record-modal"
         loading={isFormLoading}
         onClose={closeFormModal}
         size="md"
@@ -576,134 +577,179 @@ export function BonameCrudPage({
             </Button>
           ) : (
             <>
-              <Button appearance="primary" loading={saveMutation.isPending} disabled={isFormLoading} onClick={() => void handleSubmit()}>
-                Salvar
-              </Button>
               <Button appearance="subtle" onClick={closeFormModal}>
                 Cancelar
+              </Button>
+              <Button appearance="primary" loading={saveMutation.isPending} disabled={isFormLoading} onClick={() => void handleSubmit()}>
+                Salvar
               </Button>
             </>
           )
         }
       >
-        <div className="boname-page__form-grid">
-          <div className="boname-page__field">
-            <label htmlFor="boname-id">ID</label>
-            <InputNumber
-              id="boname-id"
-              min={0}
-              size="sm"
-              controls={false}
-              className={formErrors.bona_id ? 'boname-page__control boname-page__control--error' : 'boname-page__control'}
-              value={formValues.bona_id}
-              disabled
-              onChange={(value) => {
-                setFormValues((current) => ({ ...current, bona_id: Number(value || 0) }))
-              }}
-            />
-            {formErrors.bona_id ? <span>{formErrors.bona_id}</span> : null}
-          </div>
-
-          <div className="boname-page__field">
-            <label htmlFor="boname-codigo">Codigo</label>
-            <Input
-              id="boname-codigo"
-              size="sm"
-              className={formErrors.bona_codigo ? 'boname-page__control boname-page__control--compact boname-page__control--error' : 'boname-page__control boname-page__control--compact'}
-              value={formValues.bona_codigo}
-              disabled={isReadOnly}
-              onChange={(value) => {
-                setFormValues((current) => ({ ...current, bona_codigo: toUppercaseValue(value) }))
-              }}
-            />
-            {formErrors.bona_codigo ? <span>{formErrors.bona_codigo}</span> : null}
-          </div>
-
-          <div className="boname-page__field boname-page__field--full">
-            <label htmlFor="boname-descricao">Descricao</label>
-            <Textarea
-              id="boname-descricao"
-              rows={3}
-              maxLength={BONAME_DESCR_MAX_LENGTH}
-              className={formErrors.bona_descr ? 'boname-page__control boname-page__control--error' : 'boname-page__control'}
-              value={formValues.bona_descr}
-              disabled={isReadOnly}
-              onChange={(value) => {
-                const nextDescription = normalizeBonameDescription(value)
-                setFormValues((current) =>
-                  current.bona_descr === nextDescription ? current : { ...current, bona_descr: nextDescription },
-                )
-              }}
-              onBlur={() => {
-                setFormValues((current) => ({
-                  ...current,
-                  bona_descr: normalizeBonameDescriptionForSave(current.bona_descr),
-                }))
-              }}
-            />
-            {formErrors.bona_descr ? <span>{formErrors.bona_descr}</span> : null}
-          </div>
-
-          <div className="boname-page__field">
-            <label htmlFor="boname-qt-ui">Quantidade por unidade</label>
-            <InputNumber
-              id="boname-qt-ui"
-              min={0}
-              controls={false}
-              className={formErrors.bona_qt_ui ? 'boname-page__control boname-page__control--error' : 'boname-page__control'}
-              value={formValues.bona_qt_ui}
-              disabled={isReadOnly}
-              onChange={(value) => {
-                setFormValues((current) => ({ ...current, bona_qt_ui: Number(value || 0) }))
-              }}
-            />
-            {formErrors.bona_qt_ui ? <span>{formErrors.bona_qt_ui}</span> : null}
-          </div>
-
-          <div className="boname-page__field">
-            <label htmlFor="boname-diag-id">Diagnostico</label>
-            <SelectPicker
-              id="boname-diag-id"
-              block
-              cleanable={false}
-              data={diagnosticosQuery.data ?? []}
-              loading={diagnosticosQuery.isPending}
-              placeholder="Selecione o diagnostico"
-              searchable
-              className={formErrors.bona_diag_id ? 'boname-page__control boname-page__control--error' : 'boname-page__control'}
-              value={formValues.bona_diag_id || null}
-              disabled={isReadOnly}
-              onChange={(value) => {
-                setFormValues((current) => ({ ...current, bona_diag_id: Number(value || 0) }))
-              }}
-            />
-            {formErrors.bona_diag_id ? <span>{formErrors.bona_diag_id}</span> : null}
-            {diagnosticosQuery.isError ? <span>Falha ao carregar os diagnosticos ativos.</span> : null}
-          </div>
-
-          <div className="boname-page__field boname-page__field--full">
-            <label>Status do registro</label>
-            <div className="boname-page__status-panel">
-              {!isReadOnly ? (
-                <div className="boname-page__status-actions">
-                  <Button
-                    appearance={formValues.bona_ativo === 1 ? 'primary' : 'subtle'}
-                    size="sm"
-                    onClick={() => setFormValues((current) => ({ ...current, bona_ativo: 1 }))}
-                  >
-                    Ativar
-                  </Button>
-                  <Button
-                    appearance={formValues.bona_ativo === 0 ? 'primary' : 'subtle'}
-                    color={formValues.bona_ativo === 0 ? 'red' : undefined}
-                    size="sm"
-                    onClick={() => setFormValues((current) => ({ ...current, bona_ativo: 0 }))}
-                  >
-                    Inativar
-                  </Button>
-                </div>
-              ) : null}
+        <div className="boname-page__modal-shell">
+          <div className="boname-page__modal-main">
+            <div className="boname-page__modal-summary" aria-hidden="true">
+              <div>
+                <span>Codigo</span>
+                <strong>{formValues.bona_codigo || 'Novo'}</strong>
+              </div>
+              <div>
+                <span>Status</span>
+                <StatusBadge tone={formValues.bona_ativo === 1 ? 'success' : 'danger'}>
+                  {formValues.bona_ativo === 1 ? 'Ativo' : 'Inativo'}
+                </StatusBadge>
+              </div>
+              <div>
+                <span>Qt. UI</span>
+                <strong>{formValues.bona_qt_ui || 0}</strong>
+              </div>
             </div>
+
+            <section className="boname-page__form-card" aria-labelledby="boname-form-heading">
+              <div className="boname-page__form-card-header">
+                <div>
+                  <span>Formulario</span>
+                  <h3 id="boname-form-heading">Dados do Boname</h3>
+                </div>
+                <StatusBadge tone={formValues.bona_ativo === 1 ? 'success' : 'danger'}>
+                  {formValues.bona_ativo === 1 ? 'Ativo' : 'Inativo'}
+                </StatusBadge>
+              </div>
+
+              <div className="boname-page__form-grid">
+                <div className="boname-page__field">
+                  <label htmlFor="boname-id">ID</label>
+                  <InputNumber
+                    id="boname-id"
+                    min={0}
+                    size="sm"
+                    controls={false}
+                    className={formErrors.bona_id ? 'boname-page__control boname-page__control--error' : 'boname-page__control'}
+                    value={formValues.bona_id}
+                    disabled
+                    onChange={(value) => {
+                      setFormValues((current) => ({ ...current, bona_id: Number(value || 0) }))
+                    }}
+                  />
+                  {formErrors.bona_id ? <span>{formErrors.bona_id}</span> : null}
+                </div>
+
+                <div className="boname-page__field">
+                  <label htmlFor="boname-codigo">Codigo</label>
+                  <Input
+                    id="boname-codigo"
+                    size="sm"
+                    className={formErrors.bona_codigo ? 'boname-page__control boname-page__control--compact boname-page__control--error' : 'boname-page__control boname-page__control--compact'}
+                    value={formValues.bona_codigo}
+                    disabled={isReadOnly}
+                    onChange={(value) => {
+                      setFormValues((current) => ({ ...current, bona_codigo: toUppercaseValue(value) }))
+                    }}
+                  />
+                  {formErrors.bona_codigo ? <span>{formErrors.bona_codigo}</span> : null}
+                </div>
+
+                <div className="boname-page__field boname-page__field--full">
+                  <label htmlFor="boname-descricao">Descricao</label>
+                  <Textarea
+                    id="boname-descricao"
+                    rows={3}
+                    maxLength={BONAME_DESCR_MAX_LENGTH}
+                    className={formErrors.bona_descr ? 'boname-page__control boname-page__control--error' : 'boname-page__control'}
+                    value={formValues.bona_descr}
+                    disabled={isReadOnly}
+                    onChange={(value) => {
+                      const nextDescription = normalizeBonameDescription(value)
+                      setFormValues((current) =>
+                        current.bona_descr === nextDescription ? current : { ...current, bona_descr: nextDescription },
+                      )
+                    }}
+                    onBlur={() => {
+                      setFormValues((current) => ({
+                        ...current,
+                        bona_descr: normalizeBonameDescriptionForSave(current.bona_descr),
+                      }))
+                    }}
+                  />
+                  {formErrors.bona_descr ? <span>{formErrors.bona_descr}</span> : null}
+                </div>
+
+                <div className="boname-page__field">
+                  <label htmlFor="boname-qt-ui">Quantidade por unidade</label>
+                  <InputNumber
+                    id="boname-qt-ui"
+                    min={0}
+                    controls={false}
+                    className={formErrors.bona_qt_ui ? 'boname-page__control boname-page__control--error' : 'boname-page__control'}
+                    value={formValues.bona_qt_ui}
+                    disabled={isReadOnly}
+                    onChange={(value) => {
+                      setFormValues((current) => ({ ...current, bona_qt_ui: Number(value || 0) }))
+                    }}
+                  />
+                  {formErrors.bona_qt_ui ? <span>{formErrors.bona_qt_ui}</span> : null}
+                </div>
+
+                <div className="boname-page__field">
+                  <label id="boname-diag-label">Diagnostico</label>
+                  <SelectPicker
+                    aria-label="Diagnostico"
+                    aria-labelledby="boname-diag-label"
+                    block
+                    cleanable={false}
+                    data={diagnosticosQuery.data ?? []}
+                    loading={diagnosticosQuery.isPending}
+                    name="bona_diag_id"
+                    placeholder="Selecione o diagnostico"
+                    searchable
+                    className={formErrors.bona_diag_id ? 'boname-page__control boname-page__control--error' : 'boname-page__control'}
+                    value={formValues.bona_diag_id || null}
+                    disabled={isReadOnly}
+                    onChange={(value) => {
+                      setFormValues((current) => ({ ...current, bona_diag_id: Number(value || 0) }))
+                    }}
+                  />
+                  {formErrors.bona_diag_id ? <span>{formErrors.bona_diag_id}</span> : null}
+                  {diagnosticosQuery.isError ? <span>Falha ao carregar os diagnosticos ativos.</span> : null}
+                </div>
+
+                <fieldset className="boname-page__field boname-page__field--full boname-page__status-fieldset">
+                  <legend>Status do registro</legend>
+                  <div className="boname-page__status-panel">
+                    <div className="boname-page__status-copy">
+                      <StatusBadge tone={formValues.bona_ativo === 1 ? 'success' : 'danger'}>
+                        {formValues.bona_ativo === 1 ? 'Ativo' : 'Inativo'}
+                      </StatusBadge>
+                      <small>
+                        {formValues.bona_ativo === 1
+                          ? 'Registro disponivel para uso nas integracoes.'
+                          : 'Registro mantido no cadastro, sem uso operacional ativo.'}
+                      </small>
+                    </div>
+                    {!isReadOnly ? (
+                      <div className="boname-page__status-actions">
+                        <Button
+                          appearance={formValues.bona_ativo === 1 ? 'primary' : 'subtle'}
+                          size="sm"
+                          onClick={() => setFormValues((current) => ({ ...current, bona_ativo: 1 }))}
+                        >
+                          Ativar
+                        </Button>
+                        <Button
+                          appearance={formValues.bona_ativo === 0 ? 'primary' : 'subtle'}
+                          color={formValues.bona_ativo === 0 ? 'red' : undefined}
+                          size="sm"
+                          onClick={() => setFormValues((current) => ({ ...current, bona_ativo: 0 }))}
+                        >
+                          Inativar
+                        </Button>
+                      </div>
+                    ) : null}
+                  </div>
+                </fieldset>
+              </div>
+            </section>
           </div>
         </div>
       </AppModal>

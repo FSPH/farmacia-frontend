@@ -20,24 +20,17 @@ O agente frontend deve:
 
 # REGRA OBRIGATÓRIA CONTEXT7:
 
-Antes de criar ou alterar frontend:
-
-1. Consultar Context7
-2. Consultar MCP farmacia
-3. Implementar
-4. Validar via Puppeeteer
+Antes de criar ou alterar frontend Consultar Context7
 
 Bibliotecas obrigatórias para consulta:
 - React
 - RSuite
 - Vite
-- Tailwind
 - Zustand
 - Axios
 - React Hook Form
 - Zod
 - Vitest
-
 
 Objetivo:
 Implementar:
@@ -60,4 +53,4 @@ Padrões:
 - Axios
 - Rsuite
 - componentes reutilizáveis
-- validar sempre páginas e fluxos alterados com Puppeeter antes de concluir
+- validar sempre páginas e fluxos alterados

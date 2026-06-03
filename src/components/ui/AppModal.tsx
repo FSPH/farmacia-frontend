@@ -6,6 +6,7 @@ export type AppModalIntent = 'confirm' | 'create' | 'delete' | 'edit' | 'map' | 
 export interface AppModalProps {
   backdrop?: boolean | 'static'
   children: ReactNode
+  className?: string
   footer?: ReactNode
   intent?: AppModalIntent
   intentVisible?: boolean
@@ -30,6 +31,7 @@ const INTENT_LABELS: Record<AppModalIntent, string> = {
 export function AppModal({
   backdrop = true,
   children,
+  className,
   footer,
   intent = 'view',
   intentVisible = true,
@@ -40,8 +42,10 @@ export function AppModal({
   subtitle,
   title,
 }: AppModalProps) {
+  const modalClassName = ['app-modal', `app-modal--${intent}`, className].filter(Boolean).join(' ')
+
   return (
-    <Modal backdrop={backdrop} open={open} size={size} onClose={onClose} className={`app-modal app-modal--${intent}`}>
+    <Modal backdrop={backdrop} open={open} size={size} onClose={onClose} className={modalClassName}>
       <Modal.Header>
         <div className="app-modal__header">
           <div className="app-modal__copy">
