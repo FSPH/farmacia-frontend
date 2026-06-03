@@ -25,7 +25,7 @@ import {
   RiNotification3Line,
   RiShieldCrossLine,
 } from 'react-icons/ri'
-import logoFull from '../assets/img/logo_full.jpeg'
+import logoFull from '../assets/img/logo_full.png'
 import logoSimple from '../assets/img/logo_simple.jpeg'
 import menuIcon from '../assets/img/menu.svg'
 import { NAVIGATION_GROUPS, type SectionKey } from '../config/navigation'
@@ -113,11 +113,44 @@ export function MainLayout({
   const activeMenuKey = SECTION_MENU_MAP[activeSidebarKey]
   const [openMenuKeys, setOpenMenuKeys] = useState<string[]>(activeMenuKey ? [activeMenuKey] : [])
   const headerStyle = isMobile ? undefined : { left: sidebarWidth }
+  const isSidebarCollapsed = !showSidebarLabels
+  const effectiveOpenMenuKeys =
+    activeMenuKey && !isSidebarCollapsed && !openMenuKeys.includes(activeMenuKey) ? [activeMenuKey] : openMenuKeys
 
   useEffect(() => {
-    if (!activeMenuKey) return
-    setOpenMenuKeys((currentKeys) => (currentKeys.includes(activeMenuKey) ? currentKeys : [activeMenuKey]))
-  }, [activeMenuKey])
+    if (!isSidebarCollapsed || openMenuKeys.length === 0) return
+
+    const handleDocumentPointerDown = (event: PointerEvent) => {
+      const target = event.target
+
+      if (!(target instanceof Element)) return
+
+      const isInsideSidebar = Boolean(target.closest('.main-layout__sidebar'))
+      const isInsideSidenavDropdown = Boolean(target.closest('.rs-dropdown-menu'))
+
+      if (!isInsideSidebar && !isInsideSidenavDropdown) {
+        setOpenMenuKeys([])
+      }
+    }
+
+    document.addEventListener('pointerdown', handleDocumentPointerDown)
+
+    return () => {
+      document.removeEventListener('pointerdown', handleDocumentPointerDown)
+    }
+  }, [isSidebarCollapsed, openMenuKeys.length])
+
+  const handleMenuOpenChange = (nextOpenKeys: string[]) => {
+    if (!isSidebarCollapsed) {
+      setOpenMenuKeys(nextOpenKeys)
+      return
+    }
+
+    setOpenMenuKeys((currentKeys) => {
+      const newlyOpenedKey = nextOpenKeys.find((key) => !currentKeys.includes(key))
+      return newlyOpenedKey ? [newlyOpenedKey] : nextOpenKeys.slice(-1)
+    })
+  }
 
   const handleSidebarSelect = (eventKey: string | number | undefined) => {
     if (typeof eventKey !== 'string' || !SIDEBAR_SECTION_KEYS.has(eventKey as SectionKey) || !onSidebarSelect) {
@@ -125,6 +158,10 @@ export function MainLayout({
     }
 
     onSidebarSelect(eventKey as SectionKey)
+
+    if (isSidebarCollapsed) {
+      setOpenMenuKeys([])
+    }
 
     if (isMobile) {
       setIsMobileSidebarOpen(false)
@@ -265,12 +302,11 @@ export function MainLayout({
               </div>
               <div className="main-layout__sidebar-groups">
                 <Sidenav
-                  key={activeMenuKey ?? 'overview'}
                   appearance="subtle"
                   expanded={showSidebarLabels}
                   className="main-layout__sidenav"
-                  openKeys={openMenuKeys}
-                  onOpenChange={(nextOpenKeys) => setOpenMenuKeys(nextOpenKeys as string[])}
+                  openKeys={effectiveOpenMenuKeys}
+                  onOpenChange={(nextOpenKeys) => handleMenuOpenChange(nextOpenKeys as string[])}
                 >
                   <Sidenav.Body>
                     <Nav
@@ -304,7 +340,7 @@ export function MainLayout({
                             eventKey={getMenuEventKey(group.title)}
                             icon={group.items[0].icon}
                             key={group.title}
-                            trigger="hover"
+                            trigger={showSidebarLabels ? 'hover' : 'click'}
                             placement={showSidebarLabels ? undefined : 'rightStart'}
                             title={group.title}
                           >

@@ -1002,6 +1002,16 @@
   box-shadow: 0 16px 34px rgba(2, 6, 23, 0.3) !important;
 }
 
+.main-layout__sidebar--collapsed .main-layout__nav .rs-dropdown-menu,
+.rs-dropdown-menu:has(.main-layout__nav-item-shell) {
+  border-color: rgba(148, 163, 184, 0.28) !important;
+  background:
+    radial-gradient(circle at top left, rgba(59, 130, 246, 0.22), transparent 34%),
+    radial-gradient(circle at bottom center, rgba(20, 184, 166, 0.18), transparent 28%),
+    linear-gradient(180deg, #091121 0%, #101a31 48%, #132341 100%) !important;
+  box-shadow: 0 18px 38px rgba(2, 6, 23, 0.34) !important;
+}
+
 .main-layout__nav .rs-nav-item.rs-nav-item-active .rs-nav-item-content,
 .main-layout__nav .rs-nav-item:hover .rs-nav-item-content,
 .main-layout__sidenav .main-layout__nav .rs-sidenav-item[data-active='true'],

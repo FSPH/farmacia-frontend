@@ -8,6 +8,7 @@ import {
   Pagination,
   Panel,
   SelectPicker,
+  Textarea,
   useMediaQuery,
 } from 'rsuite'
 import { Cell, Column, HeaderCell, Table } from 'rsuite-table'
@@ -64,6 +65,7 @@ const DEFAULT_FORM_VALUES: BonameRecord = {
 const LOCAL_STORAGE_TOKEN_KEYS = ['authToken', 'access_token', 'token', 'jwtToken']
 
 const PAGE_SIZE = 10
+const BONAME_DESCR_MAX_LENGTH = 150
 
 function getStoredToken(): string | null {
   if (typeof window === 'undefined') {
@@ -96,6 +98,14 @@ function toUppercaseValue(value: string): string {
   return value.toLocaleUpperCase('pt-BR')
 }
 
+function normalizeBonameDescription(value: string): string {
+  return value.slice(0, BONAME_DESCR_MAX_LENGTH)
+}
+
+function normalizeBonameDescriptionForSave(value: string): string {
+  return toUppercaseValue(normalizeBonameDescription(value))
+}
+
 function validateForm(values: BonameRecord): FormErrors {
   const errors: FormErrors = {}
 
@@ -105,6 +115,8 @@ function validateForm(values: BonameRecord): FormErrors {
 
   if (!values.bona_descr.trim()) {
     errors.bona_descr = 'Informe a descricao do Boname.'
+  } else if (values.bona_descr.length > BONAME_DESCR_MAX_LENGTH) {
+    errors.bona_descr = `A descricao deve ter no maximo ${BONAME_DESCR_MAX_LENGTH} caracteres.`
   }
 
   if (values.bona_qt_ui <= 0) {
@@ -322,7 +334,7 @@ export function BonameCrudPage({
     await saveMutation.mutateAsync({
       ...formValues,
       bona_codigo: formValues.bona_codigo.trim(),
-      bona_descr: formValues.bona_descr.trim(),
+      bona_descr: normalizeBonameDescriptionForSave(formValues.bona_descr).trim(),
     })
   }
 
@@ -365,6 +377,7 @@ export function BonameCrudPage({
   return (
     <section className="boname-page">
       <PageSection
+        className="boname-page__table-section"
         actions={
           <div className="boname-page__toolbar">
             <Input
@@ -432,88 +445,91 @@ export function BonameCrudPage({
 
         {!listQuery.isPending && !listQuery.isError && hasData ? (
           <>
-            {isCompactLayout ? (
-              <div className="boname-page__card-list">
-                {paginatedRecords.map((rowData) => (
-                  <Panel bordered key={rowData.bona_id} className="boname-page__record-card">
-                    <div className="boname-page__record-card-top">
-                      <div>
-                        <strong>{rowData.bona_codigo}</strong>
-                        <p>{rowData.bona_descr}</p>
-                      </div>
-                      <StatusBadge tone={rowData.bona_ativo === 1 ? 'success' : 'danger'}>
-                        {rowData.bona_ativo === 1 ? 'Ativo' : 'Inativo'}
-                      </StatusBadge>
-                    </div>
-
-                    <dl className="boname-page__record-meta">
-                      <div>
-                        <dt>ID</dt>
-                        <dd>{rowData.bona_id}</dd>
-                      </div>
-                      <div>
-                        <dt>Qt. UI</dt>
-                        <dd>{rowData.bona_qt_ui}</dd>
-                      </div>
-                      <div>
-                        <dt>Diag. ID</dt>
-                        <dd>{rowData.bona_diag_id}</dd>
-                      </div>
-                    </dl>
-
-                    {renderRowActions(rowData, true)}
-                  </Panel>
-                ))}
-              </div>
-            ) : (
-              <div className="boname-page__table-wrap">
-                <Table
-                  data={paginatedRecords}
-                  height={tableHeight}
-                  virtualized
-                  bordered
-                  rowHeight={54}
-                  headerHeight={52}
-                  autoHeight={false}
-                >
-                  <Column width={88} align="center" fixed>
-                    <HeaderCell>ID</HeaderCell>
-                    <Cell dataKey="bona_id" />
-                  </Column>
-
-                  <Column width={140}>
-                    <HeaderCell>Codigo</HeaderCell>
-                    <Cell dataKey="bona_codigo" />
-                  </Column>
-
-                  <Column flexGrow={1} minWidth={280}>
-                    <HeaderCell>Descricao</HeaderCell>
-                    <Cell dataKey="bona_descr" />
-                  </Column>
-
-                  <Column width={120} align="center">
-                    <HeaderCell>Qt. UI</HeaderCell>
-                    <Cell dataKey="bona_qt_ui" />
-                  </Column>
-
-                  <Column width={140} align="center">
-                    <HeaderCell>Status</HeaderCell>
-                    <Cell>
-                      {(rowData: BonameRecord) => (
+            <div className="boname-page__table-content">
+              {isCompactLayout ? (
+                <div className="boname-page__card-list">
+                  {paginatedRecords.map((rowData) => (
+                    <Panel bordered key={rowData.bona_id} className="boname-page__record-card">
+                      <div className="boname-page__record-card-top">
+                        <div>
+                          <strong>{rowData.bona_codigo}</strong>
+                          <p>{rowData.bona_descr}</p>
+                        </div>
                         <StatusBadge tone={rowData.bona_ativo === 1 ? 'success' : 'danger'}>
                           {rowData.bona_ativo === 1 ? 'Ativo' : 'Inativo'}
                         </StatusBadge>
-                      )}
-                    </Cell>
-                  </Column>
+                      </div>
 
-                  <Column width={260} fixed="right">
-                    <HeaderCell>Acoes</HeaderCell>
-                    <Cell>{(rowData: BonameRecord) => renderRowActions(rowData)}</Cell>
-                  </Column>
-                </Table>
-              </div>
-            )}
+                      <dl className="boname-page__record-meta">
+                        <div>
+                          <dt>ID</dt>
+                          <dd>{rowData.bona_id}</dd>
+                        </div>
+                        <div>
+                          <dt>Qt. UI</dt>
+                          <dd>{rowData.bona_qt_ui}</dd>
+                        </div>
+                        <div>
+                          <dt>Diag. ID</dt>
+                          <dd>{rowData.bona_diag_id}</dd>
+                        </div>
+                      </dl>
+
+                      {renderRowActions(rowData, true)}
+                    </Panel>
+                  ))}
+                </div>
+              ) : (
+                <div className="boname-page__table-wrap">
+                  <Table
+                    data={paginatedRecords}
+                    height={tableHeight}
+                    fillHeight
+                    virtualized
+                    bordered
+                    rowHeight={54}
+                    headerHeight={52}
+                    autoHeight={false}
+                  >
+                    <Column width={88} align="center" fixed>
+                      <HeaderCell>ID</HeaderCell>
+                      <Cell dataKey="bona_id" />
+                    </Column>
+
+                    <Column width={140}>
+                      <HeaderCell>Codigo</HeaderCell>
+                      <Cell dataKey="bona_codigo" />
+                    </Column>
+
+                    <Column flexGrow={1} minWidth={280}>
+                      <HeaderCell>Descricao</HeaderCell>
+                      <Cell dataKey="bona_descr" />
+                    </Column>
+
+                    <Column width={120} align="center">
+                      <HeaderCell>Qt. UI</HeaderCell>
+                      <Cell dataKey="bona_qt_ui" />
+                    </Column>
+
+                    <Column width={140} align="center">
+                      <HeaderCell>Status</HeaderCell>
+                      <Cell>
+                        {(rowData: BonameRecord) => (
+                          <StatusBadge tone={rowData.bona_ativo === 1 ? 'success' : 'danger'}>
+                            {rowData.bona_ativo === 1 ? 'Ativo' : 'Inativo'}
+                          </StatusBadge>
+                        )}
+                      </Cell>
+                    </Column>
+
+                    <Column width={260} fixed="right">
+                      <HeaderCell>Acoes</HeaderCell>
+                      <Cell>{(rowData: BonameRecord) => renderRowActions(rowData)}</Cell>
+                    </Column>
+                  </Table>
+                </div>
+              )}
+            </div>
 
             <div className="boname-page__table-footer">
               <p>
@@ -605,15 +621,24 @@ export function BonameCrudPage({
 
           <div className="boname-page__field boname-page__field--full">
             <label htmlFor="boname-descricao">Descricao</label>
-            <Input
+            <Textarea
               id="boname-descricao"
-              as="textarea"
               rows={3}
+              maxLength={BONAME_DESCR_MAX_LENGTH}
               className={formErrors.bona_descr ? 'boname-page__control boname-page__control--error' : 'boname-page__control'}
               value={formValues.bona_descr}
               disabled={isReadOnly}
               onChange={(value) => {
-                setFormValues((current) => ({ ...current, bona_descr: toUppercaseValue(value) }))
+                const nextDescription = normalizeBonameDescription(value)
+                setFormValues((current) =>
+                  current.bona_descr === nextDescription ? current : { ...current, bona_descr: nextDescription },
+                )
+              }}
+              onBlur={() => {
+                setFormValues((current) => ({
+                  ...current,
+                  bona_descr: normalizeBonameDescriptionForSave(current.bona_descr),
+                }))
               }}
             />
             {formErrors.bona_descr ? <span>{formErrors.bona_descr}</span> : null}
