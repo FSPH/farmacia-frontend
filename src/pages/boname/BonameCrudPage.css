@@ -94,6 +94,24 @@
   border-radius: 1.15rem;
 }
 
+.boname-page__table-wrap .rs-table-row-header,
+.boname-page__table-wrap .rs-table-row-header .rs-table-cell,
+.boname-page__table-wrap .rs-table-row-header .rs-table-cell-group-fixed-left,
+.boname-page__table-wrap .rs-table-row-header .rs-table-cell-group-fixed-right {
+  background:
+    linear-gradient(135deg, rgba(219, 234, 254, 0.96), rgba(204, 251, 241, 0.72)),
+    linear-gradient(180deg, rgba(15, 23, 42, 0.06), transparent);
+}
+
+.boname-page__table-wrap .rs-table-row-header .rs-table-cell {
+  border-bottom-color: rgba(15, 23, 42, 0.12);
+}
+
+.boname-page__table-wrap .rs-table-row-header .rs-table-cell-content {
+  color: #132341;
+  font-weight: 800;
+}
+
 .boname-page__row-actions {
   height: 100%;
   padding: 0.45rem;

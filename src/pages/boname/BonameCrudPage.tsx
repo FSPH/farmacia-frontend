@@ -64,7 +64,7 @@ const DEFAULT_FORM_VALUES: BonameRecord = {
 
 const LOCAL_STORAGE_TOKEN_KEYS = ['authToken', 'access_token', 'token', 'jwtToken']
 
-const PAGE_SIZE = 10
+const PAGE_SIZE = 11
 const BONAME_DESCR_MAX_LENGTH = 150
 
 function getStoredToken(): string | null {
