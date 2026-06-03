@@ -563,7 +563,7 @@ export function BonameCrudPage({
         subtitle={
           modalMode === 'view'
             ? 'Consulta em modo leitura do cadastro selecionado.'
-            : 'Formulario padronizado com validacao visual e acoes alinhadas.'
+            : 'Preencha os dados cadastrais e confirme a gravacao.'
         }
         intentVisible={false}
         className="boname-page__record-modal"
@@ -588,36 +588,8 @@ export function BonameCrudPage({
         }
       >
         <div className="boname-page__modal-shell">
-          <div className="boname-page__modal-main">
-            <div className="boname-page__modal-summary" aria-hidden="true">
-              <div>
-                <span>Codigo</span>
-                <strong>{formValues.bona_codigo || 'Novo'}</strong>
-              </div>
-              <div>
-                <span>Status</span>
-                <StatusBadge tone={formValues.bona_ativo === 1 ? 'success' : 'danger'}>
-                  {formValues.bona_ativo === 1 ? 'Ativo' : 'Inativo'}
-                </StatusBadge>
-              </div>
-              <div>
-                <span>Qt. UI</span>
-                <strong>{formValues.bona_qt_ui || 0}</strong>
-              </div>
-            </div>
-
-            <section className="boname-page__form-card" aria-labelledby="boname-form-heading">
-              <div className="boname-page__form-card-header">
-                <div>
-                  <span>Formulario</span>
-                  <h3 id="boname-form-heading">Dados do Boname</h3>
-                </div>
-                <StatusBadge tone={formValues.bona_ativo === 1 ? 'success' : 'danger'}>
-                  {formValues.bona_ativo === 1 ? 'Ativo' : 'Inativo'}
-                </StatusBadge>
-              </div>
-
-              <div className="boname-page__form-grid">
+          <section className="boname-page__form-panel" aria-label="Formulario de Boname">
+            <div className="boname-page__form-grid">
                 <div className="boname-page__field">
                   <label htmlFor="boname-id">ID</label>
                   <InputNumber
@@ -632,7 +604,7 @@ export function BonameCrudPage({
                       setFormValues((current) => ({ ...current, bona_id: Number(value || 0) }))
                     }}
                   />
-                  {formErrors.bona_id ? <span>{formErrors.bona_id}</span> : null}
+                  {formErrors.bona_id ? <span role="alert">{formErrors.bona_id}</span> : null}
                 </div>
 
                 <div className="boname-page__field">
@@ -647,7 +619,7 @@ export function BonameCrudPage({
                       setFormValues((current) => ({ ...current, bona_codigo: toUppercaseValue(value) }))
                     }}
                   />
-                  {formErrors.bona_codigo ? <span>{formErrors.bona_codigo}</span> : null}
+                  {formErrors.bona_codigo ? <span role="alert">{formErrors.bona_codigo}</span> : null}
                 </div>
 
                 <div className="boname-page__field boname-page__field--full">
@@ -672,7 +644,7 @@ export function BonameCrudPage({
                       }))
                     }}
                   />
-                  {formErrors.bona_descr ? <span>{formErrors.bona_descr}</span> : null}
+                  {formErrors.bona_descr ? <span role="alert">{formErrors.bona_descr}</span> : null}
                 </div>
 
                 <div className="boname-page__field">
@@ -688,7 +660,7 @@ export function BonameCrudPage({
                       setFormValues((current) => ({ ...current, bona_qt_ui: Number(value || 0) }))
                     }}
                   />
-                  {formErrors.bona_qt_ui ? <span>{formErrors.bona_qt_ui}</span> : null}
+                  {formErrors.bona_qt_ui ? <span role="alert">{formErrors.bona_qt_ui}</span> : null}
                 </div>
 
                 <div className="boname-page__field">
@@ -710,8 +682,8 @@ export function BonameCrudPage({
                       setFormValues((current) => ({ ...current, bona_diag_id: Number(value || 0) }))
                     }}
                   />
-                  {formErrors.bona_diag_id ? <span>{formErrors.bona_diag_id}</span> : null}
-                  {diagnosticosQuery.isError ? <span>Falha ao carregar os diagnosticos ativos.</span> : null}
+                  {formErrors.bona_diag_id ? <span role="alert">{formErrors.bona_diag_id}</span> : null}
+                  {diagnosticosQuery.isError ? <span role="alert">Falha ao carregar os diagnosticos ativos.</span> : null}
                 </div>
 
                 <fieldset className="boname-page__field boname-page__field--full boname-page__status-fieldset">
@@ -748,9 +720,8 @@ export function BonameCrudPage({
                     ) : null}
                   </div>
                 </fieldset>
-              </div>
-            </section>
-          </div>
+            </div>
+          </section>
         </div>
       </AppModal>
 
