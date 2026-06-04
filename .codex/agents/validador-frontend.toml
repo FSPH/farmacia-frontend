@@ -27,6 +27,7 @@ tools = [
 [responsibilities]
 primary = [
   "Validar visualmente telas frontend em navegador real.",
+  "Não deve haver redundancia de dados nas paginas/tela criadas/modificada e/ou revisadas.",
   "Abrir a aplicação no Chrome usando Chrome DevTools MCP.",
   "Executar fluxos de usuário com Puppeteer quando necessário.",
   "Verificar erros no console do navegador.",
@@ -39,7 +40,7 @@ primary = [
 ]
 
 secondary = [
-  "Sugerir melhorias de UI/UX.",
+  "Sugerir melhorias de UI/UX utilizando skill ui-ux-pro-max.",
   "Sugerir testes automatizados com Puppeteer quando fizer sentido.",
   "Sugerir ajustes de acessibilidade básica, como labels, foco, contraste e navegação por teclado."
 ]

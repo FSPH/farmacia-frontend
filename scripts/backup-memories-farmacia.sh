@@ -2,49 +2,75 @@
 set -euo pipefail
 
 PROJECT_ROOT="/home/ovidio-neto/farmacia"
-SOURCE_DIR="$PROJECT_ROOT/.codex/memories"
-TARGET_REPO_DIR="/home/ovidio-neto/memories-farmacia"
-TARGET_REPO_SSH="git@github.com:FSPH/memories.git"
-TARGET_SUBDIR=".codex/memories-backup/farmacia"
-DATE_TAG="$(date +%F)"
+MEMORIES_REPO_DIR="$PROJECT_ROOT/memories"
+MEMORIES_FILE="$MEMORIES_REPO_DIR/context-summary.md"
+MEMORIES_COMMIT_MESSAGE="Atualiza resumo de contexto do projeto farmacia"
+PROJECT_COMMIT_MESSAGE="Atualiza referência do submódulo memories"
 TS_UTC="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
-if [[ ! -d "$SOURCE_DIR" ]]; then
-  echo "Source memories directory not found: $SOURCE_DIR"
-  exit 1
-fi
+require_git_repo() {
+  local repo_dir="$1"
 
-if [[ ! -d "$TARGET_REPO_DIR/.git" ]]; then
-  git clone "$TARGET_REPO_SSH" "$TARGET_REPO_DIR"
-fi
-
-cd "$TARGET_REPO_DIR"
-git pull --ff-only
-
-mkdir -p "$TARGET_SUBDIR/snapshots/$DATE_TAG"
-
-# Snapshot only project-scoped memory artifacts (sanitized-by-selection).
-for f in memory_summary.md MEMORY.md; do
-  if [[ -f "$SOURCE_DIR/$f" ]]; then
-    cp "$SOURCE_DIR/$f" "$TARGET_SUBDIR/snapshots/$DATE_TAG/$f"
+  if ! git -C "$repo_dir" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    echo "Diretório não é um repositório Git válido: $repo_dir"
+    exit 1
   fi
-done
+}
 
-mkdir -p "$TARGET_SUBDIR"
-cat > "$TARGET_SUBDIR/LAST_SYNC.txt" <<EOF
-project=farmacia
-source=$SOURCE_DIR
-synced_at_utc=$TS_UTC
-snapshot=$DATE_TAG
-EOF
+require_clean_file() {
+  if [[ ! -f "$MEMORIES_FILE" ]]; then
+    echo "Arquivo obrigatório ausente: $MEMORIES_FILE"
+    exit 1
+  fi
 
-if [[ -z "$(git status --porcelain)" ]]; then
-  echo "No changes to commit."
-  exit 0
+  if [[ ! -s "$MEMORIES_FILE" ]]; then
+    echo "Arquivo obrigatório vazio: $MEMORIES_FILE"
+    exit 1
+  fi
+}
+
+commit_if_needed() {
+  local repo_dir="$1"
+  local add_path="$2"
+  local commit_message="$3"
+
+  git -C "$repo_dir" add "$add_path"
+
+  if git -C "$repo_dir" diff --cached --quiet; then
+    return 1
+  fi
+
+  git -C "$repo_dir" commit -m "$commit_message"
+  git -C "$repo_dir" push
+  return 0
+}
+
+require_git_repo "$PROJECT_ROOT"
+require_git_repo "$MEMORIES_REPO_DIR"
+require_clean_file
+
+echo "[$TS_UTC] Validando repositório de memórias em $MEMORIES_REPO_DIR"
+
+memories_head_before="$(git -C "$MEMORIES_REPO_DIR" rev-parse HEAD)"
+memories_changed=0
+
+if commit_if_needed "$MEMORIES_REPO_DIR" "context-summary.md" "$MEMORIES_COMMIT_MESSAGE"; then
+  memories_changed=1
+  echo "Resumo de contexto publicado no repositório de memórias."
+else
+  echo "Nenhuma alteração para publicar em memories/context-summary.md."
 fi
 
-git add "$TARGET_SUBDIR"
-git commit -m "memories commited (farmacia $DATE_TAG)"
-git push origin main
+memories_head_after="$(git -C "$MEMORIES_REPO_DIR" rev-parse HEAD)"
 
-echo "Memories backup completed for farmacia at $TS_UTC"
+if [[ "$memories_head_before" != "$memories_head_after" || "$memories_changed" -eq 1 ]]; then
+  if commit_if_needed "$PROJECT_ROOT" "memories" "$PROJECT_COMMIT_MESSAGE"; then
+    echo "Referência do submódulo memories atualizada no repositório principal."
+  else
+    echo "Submódulo atualizado, mas sem mudança pendente no repositório principal."
+  fi
+else
+  echo "HEAD do submódulo não mudou; nenhuma atualização necessária no repositório principal."
+fi
+
+echo "Fluxo de atualização de memories concluído em $TS_UTC"
