@@ -49,6 +49,9 @@ export function HomeDashboardPage({ onOpenSection }: HomeDashboardPageProps) {
               <Button appearance="primary" onClick={() => onOpenSection('parametros/boname')}>
                 Abrir Boname
               </Button>
+              <Button appearance="subtle" onClick={() => onOpenSection('parametros/diagnosticos')}>
+                Abrir Diagnosticos
+              </Button>
               <Button appearance="subtle" onClick={() => onOpenSection('requisicoes')}>
                 Ver requisicoes
               </Button>

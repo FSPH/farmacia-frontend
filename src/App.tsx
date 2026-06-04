@@ -3,6 +3,7 @@ import MainLayout from './components/MainLayout'
 import { APP_SECTIONS, QUICK_ACTIONS, type SectionKey } from './config/navigation'
 import './App.css'
 import BonamePage from './pages/BonamePage'
+import DiagnosticosPage from './pages/DiagnosticosPage'
 import HomeDashboardPage from './pages/HomeDashboardPage'
 import ModulePlaceholderPage from './pages/ModulePlaceholderPage'
 
@@ -11,6 +12,8 @@ const DEFAULT_SECTION_KEY: SectionKey = 'inicio'
 function App() {
   const [activeSectionKey, setActiveSectionKey] = useState<SectionKey>(DEFAULT_SECTION_KEY)
   const section = APP_SECTIONS[activeSectionKey]
+  const isCadastroSection =
+    activeSectionKey === 'parametros/boname' || activeSectionKey === 'parametros/diagnosticos'
 
   return (
     <MainLayout
@@ -18,9 +21,9 @@ function App() {
       breadcrumbItems={section.breadcrumbItems}
       onQuickActionSelect={setActiveSectionKey}
       onSidebarSelect={setActiveSectionKey}
-      pageBannerCompact={activeSectionKey === 'parametros/boname'}
+      pageBannerCompact={isCadastroSection}
       pageDescription={section.description}
-      pageMetaVisible={activeSectionKey !== 'parametros/boname'}
+      pageMetaVisible={!isCadastroSection}
       pageStatus={section.status}
       pageTitle={section.title}
       quickActions={QUICK_ACTIONS}
@@ -29,6 +32,8 @@ function App() {
         <HomeDashboardPage onOpenSection={setActiveSectionKey} />
       ) : activeSectionKey === 'parametros/boname' ? (
         <BonamePage />
+      ) : activeSectionKey === 'parametros/diagnosticos' ? (
+        <DiagnosticosPage />
       ) : (
         <ModulePlaceholderPage
           moduleKey={activeSectionKey}

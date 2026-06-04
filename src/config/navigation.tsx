@@ -9,6 +9,7 @@ import {
 } from 'react-icons/ri'
 
 export type SectionKey = 'inicio' | 'pacientes' | 'estoque' | 'requisicoes' | 'parametros/boname'
+  | 'parametros/diagnosticos'
 
 export type SectionMeta = {
   breadcrumbItems: string[]
@@ -60,6 +61,12 @@ export const APP_SECTIONS: Record<SectionKey, SectionMeta> = {
     status: 'Cadastro mestre',
     title: 'Cadastro de Boname',
   },
+  'parametros/diagnosticos': {
+    breadcrumbItems: ['Inicio', 'Cadastros', 'Diagnosticos'],
+    description: '',
+    status: 'Cadastro mestre',
+    title: 'Cadastro de Diagnosticos',
+  },
 }
 
 export const NAVIGATION_GROUPS: NavigationGroup[] = [
@@ -103,6 +110,11 @@ export const NAVIGATION_GROUPS: NavigationGroup[] = [
         icon: <RiMedicineBottleLine size={18} />,
         label: 'Boname',
       },
+      {
+        eventKey: 'parametros/diagnosticos',
+        icon: <RiFileList3Line size={18} />,
+        label: 'Diagnosticos',
+      },
     ],
   },
 ]
@@ -110,6 +122,7 @@ export const NAVIGATION_GROUPS: NavigationGroup[] = [
 export const QUICK_ACTIONS: Array<{ eventKey: SectionKey; label: string }> = [
   { eventKey: 'inicio', label: 'Abrir dashboard' },
   { eventKey: 'parametros/boname', label: 'Abrir cadastro de Boname' },
+  { eventKey: 'parametros/diagnosticos', label: 'Abrir cadastro de Diagnosticos' },
   { eventKey: 'requisicoes', label: 'Consultar requisicoes' },
   { eventKey: 'estoque', label: 'Ver resumo de estoque' },
 ]
