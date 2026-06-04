@@ -1,0 +1,3 @@
+Antes de executar /compact, atualize memories/context-summary.md 
+com o resumo do contexto atual da sessão, incluindo decisões, 
+pendências, arquivos relevantes e próximos passos. Não salve segredos.

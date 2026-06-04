@@ -1,0 +1,19 @@
+model = "gpt-5.4"
+model_reasoning_effort = "medium"
+personality = "pragmatic"
+[projects."/home/ovidio-neto/farmacia"]
+trust_level = "trusted"
+
+[agents]
+max_threads = 3
+max_depth = 1
+job_max_runtime_seconds = 1800
+
+[features]
+memories = true
+
+[mcp_servers.farmacia]
+command = "node"
+args = ["/home/ovidio-neto/farmacia/mcp/farmacia-mcp.js"]
+cwd = "/home/ovidio-neto/farmacia"
+enabled = true
