@@ -11,6 +11,7 @@ argument_hint = """
 observaçõa: gere pouco context no prompt se possivel,
 Informe a tela, rota, componente ou fluxo frontend que deve ser validado.
 Exemplo: "valide a tela de login", "teste o modal de pagamento", "verifique responsividade da rota /clientes".
+Leia: "em farmacia/AGENTS.override.md"
 """
 
 model = "gpt-5.5"

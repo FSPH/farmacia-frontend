@@ -8,7 +8,7 @@ REGRA ABSOLUTA:
 O backend é responsabilidade é do Usuario.
 Você NÃO deve alterar backend.
 Você pode revisar, apontar problemas e sugerir correções.
-Só gere patch/código backend se o Ovidio pedir explicitamente.
+Lê em farmacia/AGENTS.override.md
 
 REGRA OBRIGATÓRIA CONTEXT7:
 

@@ -30,19 +30,20 @@ git push
 
 # Regra de segurança
 
-Nunca salvar em memories/context-summary.md:
+É explicitamente proibido salvar em memories/context-summary.md:
 
-tokens;
-senhas;
-chaves privadas;
-chaves de API;
-dados sensíveis;
-credenciais;
-conteúdo confidencial que não seja necessário para continuidade técnica do projeto.
+- tokens;
+- senhas;
+- chaves privadas;
+- chaves de API;
+- dados sensíveis;
+- credenciais;
+- conteúdo confidencial que não seja necessário para continuidade técnica do projeto.
 
 ## Regra de consulta da memória versionada
 
-Antes de iniciar qualquer tarefa relevante no projeto, o agente deve consultar a memória versionada oficial em `memories/context-summary.md`.
+Antes de iniciar qualquer tarefa relevante no projeto, o agente deve consultar a memória versionada oficial em `memories/context-summary.md` 
+ou no repositorio de memorias do projeto em `https://github.com/FSPH/memories.git`.
 
 Essa consulta é obrigatória quando a tarefa envolver:
 
@@ -116,9 +117,10 @@ Fluxo:
 3. Gustavo implementa frontend.
 
 Regras críticas:
+- Todo ID primario deve ser zero na sua criação a API trata do ID's primario.
 - Nunca recriar tabelas.
 - Nunca escrever no schema fsph_ambulatorio.
 - Toda movimentação de estoque deve usar transaction.
 - Requisição só baixa estoque após aprovação.
 - Inventário fechado não pode ser reaberto.
-- Estoque controlado por depósito + medicamento + lote.
+- Estoque controlado por depósito + medicamento + lote. 
