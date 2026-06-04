@@ -1,3 +1,6 @@
 
 # Codex temporary files
 .codex/.tmp/
+
+# Codex internal memories
+.codex/memories
