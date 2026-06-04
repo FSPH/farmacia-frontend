@@ -14,7 +14,7 @@ memories/context-summary.md
 ```
 A pasta memories/ é um submódulo Git vinculado ao repositório: git@github.com:FSPH/memories.git
 
-Comandos para atualizar o repositório de memórias
+Comandos para atualizar o repositório de memórias:
 cd /home/ovidio-neto/farmacia/memories
 git status
 git add context-summary.md
