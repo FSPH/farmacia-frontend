@@ -1,0 +1,3 @@
+[submodule "memories"]
+	path = memories
+	url = git@github.com:FSPH/memories.git
