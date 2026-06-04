@@ -11,7 +11,7 @@ A memória versionada oficial deste projeto fica em:
 
 ```txt
 memories/context-summary.md
-
+```
 pasta memories/ é um submódulo Git vinculado ao repositório: git@github.com:FSPH/memories.git
 
 Comandos para atualizar o repositório de memórias
@@ -27,6 +27,18 @@ git status
 git add memories
 git commit -m "Atualiza referência do submódulo memories"
 git push
+
+# Regra de segurança
+
+Nunca salvar em memories/context-summary.md:
+
+tokens;
+senhas;
+chaves privadas;
+chaves de API;
+dados sensíveis;
+credenciais;
+conteúdo confidencial que não seja necessário para continuidade técnica do projeto.
 
 # Uso Obrigatório do Context7
 
