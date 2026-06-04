@@ -17,3 +17,10 @@ command = "node"
 args = ["/home/ovidio-neto/farmacia/mcp/farmacia-mcp.js"]
 cwd = "/home/ovidio-neto/farmacia"
 enabled = true
+
+
+[mcp_servers.puppeteer]
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-puppeteer"]
+cwd = "/home/ovidio-neto/farmacia"
+enabled = true
