@@ -1,0 +1,8 @@
+export { default as BonameCrudPage } from './boname'
+export type { BonameCrudPageProps, BonameRecord } from './boname'
+export { default as DepositosCrudPage } from './depositos'
+export type { DepositosCrudPageProps, DepositoRecord } from './depositos'
+export { default as DiagnosticosCrudPage } from './diagnosticos'
+export type { DiagnosticosCrudPageProps, DiagnosticoRecord } from './diagnosticos'
+export { default as TiposMedicamentosCrudPage } from './tipos-medicamentos'
+export type { TiposMedicamentosCrudPageProps, TipoMedicamentoRecord } from './tipos-medicamentos'

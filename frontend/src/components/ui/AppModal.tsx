@@ -1,0 +1,74 @@
+import type { ReactNode } from 'react'
+import { Loader, Modal } from 'rsuite'
+
+export type AppModalIntent = 'confirm' | 'create' | 'delete' | 'edit' | 'map' | 'payment' | 'view'
+
+export interface AppModalProps {
+  backdrop?: boolean | 'static'
+  children: ReactNode
+  className?: string
+  footer?: ReactNode
+  intent?: AppModalIntent
+  intentVisible?: boolean
+  loading?: boolean
+  onClose: () => void
+  open: boolean
+  size?: 'full' | 'lg' | 'md' | 'sm' | 'xs'
+  subtitle?: string
+  title: string
+}
+
+const INTENT_LABELS: Record<AppModalIntent, string> = {
+  confirm: 'Confirmacao',
+  create: 'Cadastro',
+  delete: 'Exclusao',
+  edit: 'Edicao',
+  map: 'Mapa / rota',
+  payment: 'Pagamento',
+  view: 'Visualizacao',
+}
+
+export function AppModal({
+  backdrop = true,
+  children,
+  className,
+  footer,
+  intent = 'view',
+  intentVisible = true,
+  loading = false,
+  onClose,
+  open,
+  size = 'md',
+  subtitle,
+  title,
+}: AppModalProps) {
+  const modalClassName = ['app-modal', `app-modal--${intent}`, className].filter(Boolean).join(' ')
+
+  return (
+    <Modal backdrop={backdrop} open={open} size={size} onClose={onClose} className={modalClassName}>
+      <Modal.Header>
+        <div className="app-modal__header">
+          <div className="app-modal__copy">
+            <Modal.Title>{title}</Modal.Title>
+            {subtitle ? <p>{subtitle}</p> : null}
+          </div>
+          {intentVisible ? <span className="app-modal__intent">{INTENT_LABELS[intent]}</span> : null}
+        </div>
+      </Modal.Header>
+
+      <Modal.Body>
+        {loading ? (
+          <div className="app-modal__loading">
+            <Loader size="md" content="Carregando dados..." vertical />
+          </div>
+        ) : (
+          children
+        )}
+      </Modal.Body>
+
+      {footer ? <Modal.Footer className="app-modal__footer">{footer}</Modal.Footer> : null}
+    </Modal>
+  )
+}
+
+export default AppModal
