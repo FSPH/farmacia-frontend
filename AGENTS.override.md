@@ -3,8 +3,30 @@
 Projeto:
 Sistema de Farmácia Ambulatorial Hospitalar.
 
-Não utilizar memória interna quando houver documentação disponível no Context7 e atualiza o repositorio memories no github.
-Priorizar sempre a documentação mais recente.
+## Regra obrigatória para `/compact`
+
+Sempre que o usuário usar ou solicitar `/compact`, o agente deve atualizar a memória versionada do projeto antes de encerrar, compactar ou continuar a sessão.
+
+A memória versionada oficial deste projeto fica em:
+
+```txt
+memories/context-summary.md
+
+pasta memories/ é um submódulo Git vinculado ao repositório: git@github.com:FSPH/memories.git
+
+Comandos para atualizar o repositório de memórias
+cd /home/ovidio-neto/farmacia/memories
+git status
+git add context-summary.md
+git commit -m "Atualiza resumo de contexto do projeto farmacia"
+git push
+
+Depois, se o commit do submódulo mudou, atualizar a referência no repositório principal:
+cd /home/ovidio-neto/farmacia
+git status
+git add memories
+git commit -m "Atualiza referência do submódulo memories"
+git push
 
 # Uso Obrigatório do Context7
 
