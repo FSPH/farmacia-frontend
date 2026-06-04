@@ -27,7 +27,6 @@ export default class Database implements iDatabase {
             return;
         }
 
-        const teste = {}
 
         this.conn = await createConnection({
             host: process.env.DB_HOST || '172.23.42.17',
