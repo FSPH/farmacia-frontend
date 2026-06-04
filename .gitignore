@@ -4,3 +4,7 @@
 
 # Codex internal memories
 .codex/memories
+
+# Repositórios independentes
+backend/
+frontend/
